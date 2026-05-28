@@ -57,10 +57,75 @@
   let chainBannerTimer;
   let popIntensity = 1;
 
+  const BOARD_SHELL_CHROME = 40;
+  const BOARD_SHELL_CHROME_TALL = 52;
+  const BOARD_WIDTH_CAP = 320;
+  const BOARD_WIDTH_CAP_MOBILE = 272;
+  const BOARD_WIDTH_RATIO = 0.9;
+  const BOARD_WIDTH_RATIO_MOBILE = 0.82;
+
   function showScreen(name) {
     Object.values(screens).forEach((s) => s.classList.remove("active"));
     screens[name].classList.add("active");
     document.body.classList.toggle("is-playing", name === "game");
+    if (name === "game") {
+      requestAnimationFrame(() => {
+        layoutGameScreen();
+        resizeCanvas();
+      });
+    } else {
+      resetBoardLayout();
+    }
+  }
+
+  function resetBoardLayout() {
+    const shell = document.querySelector(".board-shell");
+    if (!shell) return;
+    shell.style.removeProperty("--board-shell-w");
+    shell.style.removeProperty("width");
+  }
+
+  function layoutGameScreen() {
+    const screen = screens.game;
+    const shell = document.querySelector(".board-shell");
+    if (!screen || !shell || !screen.classList.contains("active")) {
+      resetBoardLayout();
+      return;
+    }
+
+    const hud = screen.querySelector(".hud");
+    const panel = screen.querySelector(".controls-panel");
+    const style = getComputedStyle(screen);
+    const padY =
+      parseFloat(style.paddingTop) + parseFloat(style.paddingBottom);
+    const gap = parseFloat(style.gap) || 0;
+    const crestHidden = window.matchMedia("(max-width: 380px)").matches;
+    const chrome = crestHidden ? BOARD_SHELL_CHROME : BOARD_SHELL_CHROME_TALL;
+
+    const avail =
+      screen.clientHeight -
+      (hud ? hud.offsetHeight : 0) -
+      (panel ? panel.offsetHeight : 0) -
+      padY -
+      gap * 2;
+
+    const isMobile = window.matchMedia("(max-width: 480px)").matches;
+    const widthCap = isMobile ? BOARD_WIDTH_CAP_MOBILE : BOARD_WIDTH_CAP;
+    const widthRatio = isMobile ? BOARD_WIDTH_RATIO_MOBILE : BOARD_WIDTH_RATIO;
+    const layoutBuffer = isMobile ? 14 : 0;
+
+    const maxStageH = Math.max(96, avail - chrome - layoutBuffer);
+    const maxW = Math.floor(
+      Math.min(window.innerWidth * widthRatio, widthCap, maxStageH / 2)
+    );
+
+    shell.style.setProperty("--board-shell-w", maxW + "px");
+    shell.style.width = maxW + "px";
+  }
+
+  function onViewportChange() {
+    layoutGameScreen();
+    resizeCanvas();
   }
 
   function emptyBoard() {
@@ -1452,6 +1517,7 @@
     initBgDecor();
     spawnPair();
     showScreen("game");
+    layoutGameScreen();
     resizeCanvas();
     draw();
     startBgAnim();
@@ -1526,8 +1592,12 @@
     draw();
   });
 
-  window.addEventListener("resize", resizeCanvas);
-  window.addEventListener("orientationchange", () => setTimeout(resizeCanvas, 100));
+  window.addEventListener("resize", onViewportChange);
+  window.addEventListener("orientationchange", () => setTimeout(onViewportChange, 150));
+  if (window.visualViewport) {
+    window.visualViewport.addEventListener("resize", onViewportChange);
+  }
+  requestAnimationFrame(onViewportChange);
 
   document.addEventListener(
     "touchmove",

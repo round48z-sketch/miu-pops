@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="theme-color" content="#0a0012">
+  <title>MIU POPS</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <div class="bg-grid" aria-hidden="true"></div>
+  <div class="scanlines" aria-hidden="true"></div>
+
+  <div id="app">
+    <!-- HOME -->
+    <section id="screen-home" class="screen active">
+      <div class="logo-panel">
+        <h1 class="logo" aria-label="MIU POPS">
+          <span class="logo-line logo-line--miu">MIU <span class="logo-heart" aria-hidden="true">♡</span></span>
+          <span class="logo-line logo-line--sub">POPS</span>
+        </h1>
+        <p class="tagline">PINK NEON PUZZLE</p>
+      </div>
+      <div class="difficulty-select" role="group" aria-label="難易度選択">
+        <button type="button" class="diff-btn" data-diff="easy" aria-pressed="false">EASY</button>
+        <button type="button" class="diff-btn is-active" data-diff="normal" aria-pressed="true">NORMAL</button>
+        <button type="button" class="diff-btn" data-diff="hard" aria-pressed="false">HARD</button>
+        <button type="button" class="diff-btn" data-diff="fever" aria-pressed="false">FEVER</button>
+      </div>
+      <button type="button" class="neon-btn neon-btn--hero" id="btn-start">START</button>
+      <p class="hint">同じ色を4つ以上つなげよう</p>
+    </section>
+
+    <!-- GAME -->
+    <section id="screen-game" class="screen">
+      <header class="hud">
+        <div class="diff-badge" aria-live="polite">
+          <span class="diff-badge-label">LEVEL</span>
+          <span id="diff-display" class="diff-badge-value">NORMAL</span>
+        </div>
+        <div class="stat-card stat-card--score">
+          <span class="stat-crown" aria-hidden="true">♡</span>
+          <span class="stat-label">SCORE</span>
+          <span id="score" class="stat-value">0</span>
+        </div>
+        <div class="preview-card" aria-label="次のぷよ">
+          <span class="preview-label">NEXT</span>
+          <canvas id="next-preview" width="88" height="108" aria-hidden="true"></canvas>
+        </div>
+      </header>
+
+      <div class="board-wrap">
+        <div class="board-shell">
+          <div class="board-frame-outer">
+            <div class="board-frame">
+              <span class="frame-top-neon" aria-hidden="true"></span>
+              <span class="frame-crest" aria-hidden="true">♡</span>
+              <span class="frame-heart-side frame-heart-side--l" aria-hidden="true">♡</span>
+              <span class="frame-heart-side frame-heart-side--r" aria-hidden="true">♡</span>
+              <div class="board-frame-inner">
+                <div class="board-stage">
+                  <canvas id="board-bg" width="360" height="720" aria-hidden="true"></canvas>
+                  <canvas id="board" width="360" height="720" aria-label="ゲーム盤面"></canvas>
+                  <div id="chain-banner" class="chain-banner" aria-live="polite" hidden>
+                    <span class="chain-banner__flash" aria-hidden="true"></span>
+                    <span class="chain-banner__burst" aria-hidden="true"></span>
+                    <span class="chain-banner__ring" aria-hidden="true"></span>
+                    <p class="chain-banner__text"></p>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="controls-panel">
+        <div class="controls" aria-label="操作ボタン">
+          <button type="button" class="ctrl-btn" id="btn-left" aria-label="左">
+            <span class="ctrl-icon" aria-hidden="true">◀</span>
+            <span class="ctrl-label">左</span>
+          </button>
+          <button type="button" class="ctrl-btn ctrl-btn--main" id="btn-down" aria-label="下">
+            <span class="ctrl-icon" aria-hidden="true">▼</span>
+            <span class="ctrl-label">下</span>
+          </button>
+          <button type="button" class="ctrl-btn" id="btn-rotate" aria-label="回転">
+            <span class="ctrl-icon" aria-hidden="true">↻</span>
+            <span class="ctrl-label">回転</span>
+          </button>
+          <button type="button" class="ctrl-btn" id="btn-right" aria-label="右">
+            <span class="ctrl-icon" aria-hidden="true">▶</span>
+            <span class="ctrl-label">右</span>
+          </button>
+        </div>
+
+        <div class="action-bar">
+          <button type="button" class="neon-btn neon-btn--compact" id="btn-retry">RETRY</button>
+          <button type="button" class="home-btn" id="btn-home">HOME</button>
+        </div>
+      </div>
+    </section>
+
+    <!-- GAME OVER -->
+    <section id="screen-over" class="screen">
+      <div class="game-over-panel">
+        <p class="overlay-title">GAME OVER</p>
+        <div class="stat-card stat-card--final">
+          <span class="stat-label">SCORE</span>
+          <p id="final-score" class="stat-value stat-value--final">0</p>
+        </div>
+        <div class="game-over-actions">
+          <button type="button" class="neon-btn" id="btn-retry-over">RETRY</button>
+          <button type="button" class="home-btn" id="btn-home-over">HOME</button>
+        </div>
+      </div>
+    </section>
+  </div>
+
+  <script src="game.js"></script>
+</body>
+</html>

@@ -9,7 +9,7 @@
   <title>MIU POPS</title>
   <link rel="stylesheet" href="style.css">
 </head>
-<body>
+<body class="is-home">
   <div class="bg-grid" aria-hidden="true"></div>
   <div class="scanlines" aria-hidden="true"></div>
 
@@ -27,7 +27,9 @@
         <button type="button" class="diff-btn" data-diff="easy" aria-pressed="false">EASY</button>
         <button type="button" class="diff-btn is-active" data-diff="normal" aria-pressed="true">NORMAL</button>
         <button type="button" class="diff-btn" data-diff="hard" aria-pressed="false">HARD</button>
-        <button type="button" class="diff-btn" data-diff="fever" aria-pressed="false">FEVER</button>
+        <button type="button" class="diff-btn" data-diff="expert" aria-pressed="false">EXPERT</button>
+        <button type="button" class="diff-btn" data-diff="insane" aria-pressed="false">INSANE</button>
+        <button type="button" class="diff-btn diff-btn--miu" data-diff="miu" aria-pressed="false">MIU ♡</button>
       </div>
       <button type="button" class="neon-btn neon-btn--hero" id="btn-start">START</button>
       <p class="hint">同じ色を4つ以上つなげよう</p>
@@ -39,6 +41,10 @@
         <div class="diff-badge" aria-live="polite">
           <span class="diff-badge-label">LEVEL</span>
           <span id="diff-display" class="diff-badge-value">NORMAL</span>
+        </div>
+        <div class="speed-badge" aria-live="polite">
+          <span class="speed-badge-label">SPEED</span>
+          <span id="speed-level" class="speed-badge-value">LV 5</span>
         </div>
         <div class="stat-card stat-card--score">
           <span class="stat-crown" aria-hidden="true">♡</span>
@@ -96,6 +102,11 @@
           </button>
         </div>
 
+        <button type="button" class="ctrl-btn ctrl-btn--hard" id="btn-hard-drop" aria-label="急降下">
+          <span class="ctrl-icon" aria-hidden="true">⇓</span>
+          <span class="ctrl-label">急降下</span>
+        </button>
+
         <div class="action-bar">
           <button type="button" class="neon-btn neon-btn--compact" id="btn-retry">RETRY</button>
           <button type="button" class="home-btn" id="btn-home">HOME</button>
@@ -119,6 +130,6 @@
     </section>
   </div>
 
-  <script src="game.js"></script>
+  <script src="game.js?v=12"></script>
 </body>
 </html>

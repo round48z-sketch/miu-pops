@@ -273,10 +273,11 @@
 
   function resetBoardLayout() {
     const shell = document.querySelector(".board-shell");
-    if (!shell) return;
-    shell.style.removeProperty("--board-shell-w");
-    shell.style.removeProperty("width");
-    shell.style.removeProperty("max-height");
+    if (shell) {
+      shell.style.removeProperty("width");
+      shell.style.removeProperty("max-height");
+    }
+    if (screens.game) screens.game.style.removeProperty("--game-layout-w");
   }
 
   function layoutGameScreen() {
@@ -292,6 +293,8 @@
     const style = getComputedStyle(screen);
     const padY =
       parseFloat(style.paddingTop) + parseFloat(style.paddingBottom);
+    const padX =
+      parseFloat(style.paddingLeft) + parseFloat(style.paddingRight);
     const gap = parseFloat(style.gap) || 0;
     const crestHidden = window.matchMedia("(max-width: 380px)").matches;
     const isMobile = window.matchMedia("(max-width: 480px)").matches;
@@ -308,7 +311,7 @@
       padY -
       gap * 2;
 
-    const viewportW = window.visualViewport ? window.visualViewport.width : window.innerWidth;
+    const layoutW = Math.max(168, screen.clientWidth - padX);
     const widthCap = isMobile ? BOARD_WIDTH_CAP_MOBILE : BOARD_WIDTH_CAP;
     const widthRatio = isMobile ? BOARD_WIDTH_RATIO_MOBILE : BOARD_WIDTH_RATIO;
 
@@ -316,14 +319,14 @@
     const maxW = Math.max(
       168,
       Math.min(
-        Math.floor(viewportW * widthRatio),
+        Math.floor(layoutW * widthRatio),
         widthCap,
         Math.floor(maxStageH / 2)
       )
     );
 
-    shell.style.setProperty("--board-shell-w", maxW + "px");
-    shell.style.width = maxW + "px";
+    screen.style.setProperty("--game-layout-w", maxW + "px");
+    shell.style.width = "100%";
     shell.style.maxHeight = maxStageH + chrome + "px";
   }
 

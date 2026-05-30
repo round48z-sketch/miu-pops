@@ -644,8 +644,8 @@ body.is-home .diff-btn {
 #screen-game .hud,
 #screen-game .board-wrap,
 #screen-game .controls-panel {
-  width: var(--game-layout-w, 100%);
-  max-width: min(96vw, var(--board-max-w, 320px));
+  width: var(--game-layout-w, min(92vw, 320px));
+  max-width: min(96vw, 430px);
   margin-inline: auto;
 }
 
@@ -1429,16 +1429,17 @@ body.is-playing .ctrl-btn {
   }
 }
 
-/* スマホ：盤面を大きく、HUD/操作をコンパクトに */
+/* スマホ：盤面を大きく・中央揃え */
 @media (max-width: 480px) {
-  :root {
-    --board-max-w: 400px;
+  body.is-playing #app {
+    max-width: none;
+    width: 100%;
   }
 
   #screen-game {
     gap: 0.15rem;
-    padding-left: max(6px, env(safe-area-inset-left, 0px));
-    padding-right: max(6px, env(safe-area-inset-right, 0px));
+    padding-left: env(safe-area-inset-left, 0px);
+    padding-right: env(safe-area-inset-right, 0px);
     padding-top: max(2px, var(--safe-top));
     padding-bottom: max(2px, var(--safe-bottom));
   }
@@ -1446,13 +1447,14 @@ body.is-playing .ctrl-btn {
   #screen-game .hud,
   #screen-game .board-wrap,
   #screen-game .controls-panel {
-    width: var(--game-layout-w, min(96vw, var(--board-max-w)));
-    max-width: min(96vw, var(--board-max-w));
+    width: var(--game-layout-w, min(98vw, 430px));
+    max-width: min(98vw, 430px);
     margin-inline: auto;
   }
 
   #screen-game .board-wrap {
     min-height: 0;
+    flex: 1 1 auto;
   }
 
   .hud {

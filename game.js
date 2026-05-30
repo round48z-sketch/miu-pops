@@ -80,9 +80,9 @@
   const BOARD_SHELL_CHROME_TALL = 52;
   const BOARD_SHELL_CHROME_MOBILE = 26;
   const BOARD_WIDTH_CAP = 320;
-  const BOARD_WIDTH_CAP_MOBILE = 400;
+  const BOARD_WIDTH_CAP_MOBILE = 430;
   const BOARD_WIDTH_RATIO = 0.9;
-  const BOARD_WIDTH_RATIO_MOBILE = 0.96;
+  const BOARD_WIDTH_RATIO_MOBILE = 0.98;
 
   const Sfx = (function () {
     let ctx = null;
@@ -314,7 +314,6 @@
     const layoutW = Math.max(168, screen.clientWidth - padX);
     const widthCap = isMobile ? BOARD_WIDTH_CAP_MOBILE : BOARD_WIDTH_CAP;
     const widthRatio = isMobile ? BOARD_WIDTH_RATIO_MOBILE : BOARD_WIDTH_RATIO;
-
     const maxStageH = Math.max(120, avail - chrome);
     const maxW = Math.max(
       168,
@@ -1891,8 +1890,8 @@
     if (!stage) return;
     const rect = stage.getBoundingClientRect();
     const dpr = Math.min(window.devicePixelRatio || 1, 2);
-    const width = Math.floor(rect.width * dpr);
-    const height = Math.floor(width * 2);
+    const width = Math.max(1, Math.floor(rect.width * dpr));
+    const height = Math.max(1, Math.floor(rect.height * dpr));
     if (canvas.width !== width || canvas.height !== height) {
       canvas.width = width;
       canvas.height = height;

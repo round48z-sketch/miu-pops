@@ -78,10 +78,11 @@
 
   const BOARD_SHELL_CHROME = 40;
   const BOARD_SHELL_CHROME_TALL = 52;
+  const BOARD_SHELL_CHROME_MOBILE = 26;
   const BOARD_WIDTH_CAP = 320;
-  const BOARD_WIDTH_CAP_MOBILE = 272;
+  const BOARD_WIDTH_CAP_MOBILE = 400;
   const BOARD_WIDTH_RATIO = 0.9;
-  const BOARD_WIDTH_RATIO_MOBILE = 0.82;
+  const BOARD_WIDTH_RATIO_MOBILE = 0.96;
 
   const Sfx = (function () {
     let ctx = null;
@@ -275,6 +276,7 @@
     if (!shell) return;
     shell.style.removeProperty("--board-shell-w");
     shell.style.removeProperty("width");
+    shell.style.removeProperty("max-height");
   }
 
   function layoutGameScreen() {
@@ -292,7 +294,12 @@
       parseFloat(style.paddingTop) + parseFloat(style.paddingBottom);
     const gap = parseFloat(style.gap) || 0;
     const crestHidden = window.matchMedia("(max-width: 380px)").matches;
-    const chrome = crestHidden ? BOARD_SHELL_CHROME : BOARD_SHELL_CHROME_TALL;
+    const isMobile = window.matchMedia("(max-width: 480px)").matches;
+    const chrome = isMobile
+      ? BOARD_SHELL_CHROME_MOBILE
+      : crestHidden
+        ? BOARD_SHELL_CHROME
+        : BOARD_SHELL_CHROME_TALL;
 
     const avail =
       screen.clientHeight -
@@ -301,18 +308,23 @@
       padY -
       gap * 2;
 
-    const isMobile = window.matchMedia("(max-width: 480px)").matches;
+    const viewportW = window.visualViewport ? window.visualViewport.width : window.innerWidth;
     const widthCap = isMobile ? BOARD_WIDTH_CAP_MOBILE : BOARD_WIDTH_CAP;
     const widthRatio = isMobile ? BOARD_WIDTH_RATIO_MOBILE : BOARD_WIDTH_RATIO;
-    const layoutBuffer = isMobile ? 14 : 0;
 
-    const maxStageH = Math.max(96, avail - chrome - layoutBuffer);
-    const maxW = Math.floor(
-      Math.min(window.innerWidth * widthRatio, widthCap, maxStageH / 2)
+    const maxStageH = Math.max(120, avail - chrome);
+    const maxW = Math.max(
+      168,
+      Math.min(
+        Math.floor(viewportW * widthRatio),
+        widthCap,
+        Math.floor(maxStageH / 2)
+      )
     );
 
     shell.style.setProperty("--board-shell-w", maxW + "px");
     shell.style.width = maxW + "px";
+    shell.style.maxHeight = maxStageH + chrome + "px";
   }
 
   function onViewportChange() {

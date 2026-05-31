@@ -21,6 +21,7 @@
     insane: { label: "INSANE", scoreMult: 1.5, colors: 7, startSpeedLevel: 20 },
     miu: { label: "MIU", scoreMult: 1.75, colors: 7, startSpeedLevel: 30 },
   };
+  const LEVEL_DIFFICULTY = ["easy", "normal", "hard", "expert", "miu"];
   const OFFSETS = [
     [0, -1],
     [1, 0],
@@ -63,10 +64,10 @@
   const nextCtx = nextCanvas ? nextCanvas.getContext("2d") : null;
   const diffDisplayEl = $("diff-display");
   const speedLevelEl = $("speed-level");
-  const diffButtons = document.querySelectorAll(".diff-btn");
+  const levelButtons = document.querySelectorAll(".level-btn");
 
   let board, score, pair, nextPair, rot, dropTimer, lockTimer, gameOver, animating;
-  let difficultyId = "normal";
+  let homeLevel = 1;
   let gameStartedAt = 0;
   let speedLevel = 1;
   let speedPulseTimer = null;
@@ -375,8 +376,12 @@
     return Array.from({ length: ROWS }, () => Array(COLS).fill(null));
   }
 
+  function getDifficultyId() {
+    return LEVEL_DIFFICULTY[homeLevel - 1] || "normal";
+  }
+
   function getDifficulty() {
-    return DIFFICULTIES[difficultyId] || DIFFICULTIES.normal;
+    return DIFFICULTIES[getDifficultyId()] || DIFFICULTIES.normal;
   }
 
   function getStartSpeedLevel() {
@@ -429,19 +434,24 @@
     return Math.floor(Math.random() * getColorCount());
   }
 
-  function setDifficulty(id) {
-    if (!DIFFICULTIES[id]) return;
-    difficultyId = id;
-    diffButtons.forEach((btn) => {
-      const on = btn.dataset.diff === id;
+  function updateLevelDisplay() {
+    if (!diffDisplayEl) return;
+    diffDisplayEl.textContent = String(homeLevel);
+    const id = getDifficultyId();
+    if (id === "insane" || id === "miu") diffDisplayEl.setAttribute("data-mode", id);
+    else diffDisplayEl.removeAttribute("data-mode");
+  }
+
+  function setHomeLevel(level) {
+    const n = Number(level);
+    if (!Number.isFinite(n) || n < 1 || n > 5) return;
+    homeLevel = n;
+    levelButtons.forEach((btn) => {
+      const on = Number(btn.dataset.level) === n;
       btn.classList.toggle("is-active", on);
       btn.setAttribute("aria-pressed", on ? "true" : "false");
     });
-    if (diffDisplayEl) {
-      diffDisplayEl.textContent = getDifficulty().label;
-      if (id === "insane" || id === "miu") diffDisplayEl.setAttribute("data-mode", id);
-      else diffDisplayEl.removeAttribute("data-mode");
-    }
+    updateLevelDisplay();
   }
 
   function stopDropLoop() {
@@ -1956,12 +1966,7 @@
     stopDropLoop();
     if (lockTimer) clearTimeout(lockTimer);
     stopRaf();
-    if (diffDisplayEl) {
-      diffDisplayEl.textContent = getDifficulty().label;
-      if (difficultyId === "insane" || difficultyId === "miu") {
-        diffDisplayEl.setAttribute("data-mode", difficultyId);
-      } else diffDisplayEl.removeAttribute("data-mode");
-    }
+    if (diffDisplayEl) updateLevelDisplay();
     board = emptyBoard();
     score = 0;
     scoreEl.textContent = "0";
@@ -1988,10 +1993,10 @@
     scheduleDropLoop();
   }
 
-  diffButtons.forEach((btn) => {
-    btn.addEventListener("click", () => setDifficulty(btn.dataset.diff));
+  levelButtons.forEach((btn) => {
+    btn.addEventListener("click", () => setHomeLevel(btn.dataset.level));
   });
-  setDifficulty("normal");
+  setHomeLevel(1);
 
   function goHome() {
     stopDropLoop();

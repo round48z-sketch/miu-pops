@@ -24,13 +24,12 @@
         </h1>
         <p class="tagline">PINK NEON PUZZLE</p>
       </div>
-      <div class="difficulty-select" role="group" aria-label="難易度選択">
-        <button type="button" class="diff-btn" data-diff="easy" aria-pressed="false">EASY</button>
-        <button type="button" class="diff-btn is-active" data-diff="normal" aria-pressed="true">NORMAL</button>
-        <button type="button" class="diff-btn" data-diff="hard" aria-pressed="false">HARD</button>
-        <button type="button" class="diff-btn" data-diff="expert" aria-pressed="false">EXPERT</button>
-        <button type="button" class="diff-btn" data-diff="insane" aria-pressed="false">INSANE</button>
-        <button type="button" class="diff-btn diff-btn--miu" data-diff="miu" aria-pressed="false">MIU ♡</button>
+      <div class="level-select" role="group" aria-label="難易度選択">
+        <button type="button" class="level-btn is-active" data-level="1" aria-pressed="true">1</button>
+        <button type="button" class="level-btn" data-level="2" aria-pressed="false">2</button>
+        <button type="button" class="level-btn" data-level="3" aria-pressed="false">3</button>
+        <button type="button" class="level-btn" data-level="4" aria-pressed="false">4</button>
+        <button type="button" class="level-btn" data-level="5" aria-pressed="false">5</button>
       </div>
       <button type="button" class="neon-btn neon-btn--hero" id="btn-start">START</button>
       <p class="hint">同じ色を4つ以上つなげよう</p>
@@ -42,7 +41,7 @@
       <header class="hud">
         <div class="diff-badge" aria-live="polite">
           <span class="diff-badge-label">LEVEL</span>
-          <span id="diff-display" class="diff-badge-value">NORMAL</span>
+          <span id="diff-display" class="diff-badge-value">1</span>
         </div>
         <div class="speed-badge" aria-live="polite">
           <span class="speed-badge-label">SPEED</span>
@@ -132,6 +131,6 @@
     </section>
   </div>
 
-  <script src="game.js?v=24"></script>
+  <script src="game.js?v=26"></script>
 </body>
 </html>

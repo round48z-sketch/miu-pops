@@ -785,7 +785,7 @@ body.is-home .diff-btn {
 .board-stage {
   position: relative;
   width: 100%;
-  aspect-ratio: 1 / 2;
+  aspect-ratio: 6 / 12;
   max-height: 100%;
 }
 
@@ -1429,7 +1429,7 @@ body.is-playing .ctrl-btn {
   }
 }
 
-/* スマホ：横幅いっぱい・縦長レイアウト（480px以下） */
+/* スマホ：正方形セル・縦長盤面（480px以下） */
 @media (max-width: 480px) {
   #app {
     max-width: none;
@@ -1446,7 +1446,7 @@ body.is-playing .ctrl-btn {
   }
 
   #screen-game.active {
-    align-items: stretch;
+    align-items: center;
     gap: 0.2rem;
     padding-top: max(2px, var(--safe-top));
     padding-bottom: max(2px, var(--safe-bottom));
@@ -1457,9 +1457,9 @@ body.is-playing .ctrl-btn {
   #screen-game .hud,
   #screen-game .board-wrap,
   #screen-game .controls-panel {
-    width: 100%;
-    max-width: none;
-    margin-inline: 0;
+    width: var(--game-layout-w, min(94vw, 480px));
+    max-width: min(94vw, 480px);
+    margin-inline: auto;
   }
 
   #screen-game .hud,
@@ -1470,26 +1470,14 @@ body.is-playing .ctrl-btn {
   #screen-game .board-wrap {
     flex: 1 1 auto;
     min-height: 0;
-    align-items: stretch;
-    justify-content: stretch;
+    align-items: center;
+    justify-content: center;
   }
 
   .board-shell {
     width: 100%;
-    height: 100%;
-    max-height: none;
+    max-height: 100%;
     padding: 2px 4px;
-    display: flex;
-    flex-direction: column;
-  }
-
-  .board-frame-outer,
-  .board-frame,
-  .board-frame-inner {
-    flex: 1 1 auto;
-    min-height: 0;
-    display: flex;
-    flex-direction: column;
   }
 
   .board-frame-outer {
@@ -1503,25 +1491,22 @@ body.is-playing .ctrl-btn {
   }
 
   .board-stage {
-    flex: 1 1 auto;
-    min-height: 0;
     width: 100%;
-    height: auto;
-    aspect-ratio: unset;
-    max-height: none;
+    aspect-ratio: 6 / 12;
+    max-height: 100%;
   }
 
   .hud {
-    padding: 0 4px 2px;
+    padding: 0 2px 2px;
     gap: 4px;
   }
 
   .diff-badge,
   .speed-badge {
     width: auto;
-    min-width: 44px;
+    min-width: 42px;
     flex: 0 1 auto;
-    padding: 5px 6px;
+    padding: 5px 5px;
     border-radius: 12px;
   }
 
@@ -1554,9 +1539,9 @@ body.is-playing .ctrl-btn {
 
   .preview-card {
     width: auto;
-    min-width: 52px;
+    min-width: 50px;
     flex-shrink: 0;
-    padding: 5px 6px 4px;
+    padding: 5px 5px 4px;
     border-radius: 14px;
   }
 
@@ -1565,7 +1550,7 @@ body.is-playing .ctrl-btn {
   }
 
   .controls-panel {
-    padding: 2px 4px max(2px, var(--safe-bottom));
+    padding: 2px 2px max(2px, var(--safe-bottom));
     gap: 4px;
   }
 

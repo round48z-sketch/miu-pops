@@ -78,11 +78,8 @@
 
   const BOARD_SHELL_CHROME = 40;
   const BOARD_SHELL_CHROME_TALL = 52;
-  const BOARD_SHELL_CHROME_MOBILE = 26;
   const BOARD_WIDTH_CAP = 320;
-  const BOARD_WIDTH_CAP_MOBILE = 430;
   const BOARD_WIDTH_RATIO = 0.9;
-  const BOARD_WIDTH_RATIO_MOBILE = 0.98;
 
   const Sfx = (function () {
     let ctx = null;
@@ -288,6 +285,14 @@
       return;
     }
 
+    const isMobile = window.matchMedia("(max-width: 480px)").matches;
+    if (isMobile) {
+      screen.style.setProperty("--game-layout-w", "100%");
+      shell.style.width = "100%";
+      shell.style.removeProperty("max-height");
+      return;
+    }
+
     const hud = screen.querySelector(".hud");
     const panel = screen.querySelector(".controls-panel");
     const style = getComputedStyle(screen);
@@ -297,12 +302,7 @@
       parseFloat(style.paddingLeft) + parseFloat(style.paddingRight);
     const gap = parseFloat(style.gap) || 0;
     const crestHidden = window.matchMedia("(max-width: 380px)").matches;
-    const isMobile = window.matchMedia("(max-width: 480px)").matches;
-    const chrome = isMobile
-      ? BOARD_SHELL_CHROME_MOBILE
-      : crestHidden
-        ? BOARD_SHELL_CHROME
-        : BOARD_SHELL_CHROME_TALL;
+    const chrome = crestHidden ? BOARD_SHELL_CHROME : BOARD_SHELL_CHROME_TALL;
 
     const avail =
       screen.clientHeight -
@@ -312,14 +312,12 @@
       gap * 2;
 
     const layoutW = Math.max(168, screen.clientWidth - padX);
-    const widthCap = isMobile ? BOARD_WIDTH_CAP_MOBILE : BOARD_WIDTH_CAP;
-    const widthRatio = isMobile ? BOARD_WIDTH_RATIO_MOBILE : BOARD_WIDTH_RATIO;
     const maxStageH = Math.max(120, avail - chrome);
     const maxW = Math.max(
       168,
       Math.min(
-        Math.floor(layoutW * widthRatio),
-        widthCap,
+        Math.floor(layoutW * BOARD_WIDTH_RATIO),
+        BOARD_WIDTH_CAP,
         Math.floor(maxStageH / 2)
       )
     );

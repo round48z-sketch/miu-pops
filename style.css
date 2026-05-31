@@ -1429,43 +1429,99 @@ body.is-playing .ctrl-btn {
   }
 }
 
-/* スマホ：盤面を大きく・中央揃え */
+/* スマホ：横幅いっぱい・縦長レイアウト（480px以下） */
 @media (max-width: 480px) {
-  body.is-playing #app {
+  #app {
     max-width: none;
-    width: 100%;
   }
 
-  #screen-game {
-    gap: 0.15rem;
+  .screen {
     padding-left: env(safe-area-inset-left, 0px);
     padding-right: env(safe-area-inset-right, 0px);
+  }
+
+  #screen-home {
+    padding-left: max(10px, env(safe-area-inset-left, 0px));
+    padding-right: max(10px, env(safe-area-inset-right, 0px));
+  }
+
+  #screen-game.active {
+    align-items: stretch;
+    gap: 0.2rem;
     padding-top: max(2px, var(--safe-top));
     padding-bottom: max(2px, var(--safe-bottom));
+    padding-left: env(safe-area-inset-left, 0px);
+    padding-right: env(safe-area-inset-right, 0px);
   }
 
   #screen-game .hud,
   #screen-game .board-wrap,
   #screen-game .controls-panel {
-    width: var(--game-layout-w, min(98vw, 430px));
-    max-width: min(98vw, 430px);
-    margin-inline: auto;
+    width: 100%;
+    max-width: none;
+    margin-inline: 0;
+  }
+
+  #screen-game .hud,
+  #screen-game .controls-panel {
+    flex-shrink: 0;
   }
 
   #screen-game .board-wrap {
-    min-height: 0;
     flex: 1 1 auto;
+    min-height: 0;
+    align-items: stretch;
+    justify-content: stretch;
+  }
+
+  .board-shell {
+    width: 100%;
+    height: 100%;
+    max-height: none;
+    padding: 2px 4px;
+    display: flex;
+    flex-direction: column;
+  }
+
+  .board-frame-outer,
+  .board-frame,
+  .board-frame-inner {
+    flex: 1 1 auto;
+    min-height: 0;
+    display: flex;
+    flex-direction: column;
+  }
+
+  .board-frame-outer {
+    padding: 2px;
+    border-radius: 14px;
+  }
+
+  .board-frame {
+    padding: 5px;
+    border-radius: 12px;
+  }
+
+  .board-stage {
+    flex: 1 1 auto;
+    min-height: 0;
+    width: 100%;
+    height: auto;
+    aspect-ratio: unset;
+    max-height: none;
   }
 
   .hud {
-    padding: 0 0 2px;
+    padding: 0 4px 2px;
     gap: 4px;
   }
 
   .diff-badge,
   .speed-badge {
-    width: 46px;
-    padding: 5px 3px;
+    width: auto;
+    min-width: 44px;
+    flex: 0 1 auto;
+    padding: 5px 6px;
     border-radius: 12px;
   }
 
@@ -1493,12 +1549,14 @@ body.is-playing .ctrl-btn {
   }
 
   .stat-value {
-    font-size: clamp(1.25rem, 6.5vw, 1.65rem);
+    font-size: clamp(1.25rem, 6.5vw, 1.75rem);
   }
 
   .preview-card {
-    width: 58px;
-    padding: 5px 5px 4px;
+    width: auto;
+    min-width: 52px;
+    flex-shrink: 0;
+    padding: 5px 6px 4px;
     border-radius: 14px;
   }
 
@@ -1506,23 +1564,8 @@ body.is-playing .ctrl-btn {
     font-size: 0.42rem;
   }
 
-  .board-shell {
-    padding: 3px;
-  }
-
-  .board-frame-outer {
-    padding: 2px;
-    border-radius: 18px;
-  }
-
-  .board-frame {
-    padding: 6px;
-    border-radius: 14px;
-  }
-
   .controls-panel {
-    padding-top: 2px;
-    padding-bottom: 0;
+    padding: 2px 4px max(2px, var(--safe-bottom));
     gap: 4px;
   }
 
@@ -1531,12 +1574,12 @@ body.is-playing .ctrl-btn {
   }
 
   .ctrl-btn {
-    min-height: 42px;
+    min-height: 44px;
     border-radius: 10px;
   }
 
   .ctrl-btn--hard {
-    min-height: 38px;
+    min-height: 40px;
   }
 
   .ctrl-icon {

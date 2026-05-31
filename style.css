@@ -108,7 +108,7 @@ body {
 }
 
 body.is-playing .scanlines {
-  opacity: 0.22;
+  opacity: 0.12;
 }
 
 body.is-home .bg-grid {
@@ -120,10 +120,7 @@ body.is-home .scanlines {
 }
 
 body.is-playing .bg-grid {
-  background:
-    radial-gradient(ellipse 95% 75% at 50% 0%, rgba(255, 77, 166, 0.28) 0%, transparent 58%),
-    radial-gradient(ellipse 65% 55% at 0% 100%, rgba(255, 45, 138, 0.16) 0%, transparent 52%),
-    linear-gradient(180deg, #080008 0%, #12000e 50%, #080008 100%);
+  opacity: 0;
 }
 
 #app {
@@ -965,18 +962,68 @@ body.is-home .diff-btn {
 
 /* ----- ゲーム画面 ----- */
 #screen-game {
+  position: relative;
   justify-content: flex-start;
   gap: clamp(2px, 0.6vh, 5px);
   padding-top: max(4px, var(--safe-top));
   padding-bottom: max(4px, var(--safe-bottom));
+  overflow: hidden;
 }
+
+#screen-game::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  background: url("1.jpg") center center / cover no-repeat;
+  pointer-events: none;
+}
+
+#screen-game::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  pointer-events: none;
+  background: linear-gradient(
+    180deg,
+    rgba(8, 0, 16, 0.12) 0%,
+    rgba(8, 0, 16, 0.08) 45%,
+    rgba(8, 0, 16, 0.22) 100%
+  );
+}
+
+#screen-game[data-game-level="1"]::before { background-image: url("1.jpg"); }
+#screen-game[data-game-level="2"]::before { background-image: url("2.jpg"); }
+#screen-game[data-game-level="3"]::before { background-image: url("3.jpg"); }
+#screen-game[data-game-level="4"]::before { background-image: url("4.jpg"); }
+#screen-game[data-game-level="5"]::before { background-image: url("5.jpg"); }
 
 #screen-game .hud,
 #screen-game .board-wrap,
 #screen-game .controls-panel {
+  position: relative;
+  z-index: 1;
   width: var(--game-layout-w, min(92vw, 320px));
   max-width: min(96vw, 430px);
   margin-inline: auto;
+}
+
+body.is-playing .diff-badge,
+body.is-playing .speed-badge,
+body.is-playing .stat-card,
+body.is-playing .preview-card {
+  background: rgba(8, 0, 18, 0.52);
+  backdrop-filter: blur(5px);
+  -webkit-backdrop-filter: blur(5px);
+}
+
+body.is-playing .controls-panel {
+  background: linear-gradient(
+    to top,
+    rgba(10, 0, 18, 0.88) 55%,
+    rgba(10, 0, 18, 0.45) 100%
+  );
 }
 
 .board-wrap {
@@ -1095,6 +1142,7 @@ body.is-home .diff-btn {
   position: relative;
   border-radius: 10px;
   overflow: hidden;
+  background: rgba(8, 0, 16, 0.16);
   box-shadow:
     inset 0 0 50px rgba(255, 77, 166, 0.15),
     inset 0 0 80px rgba(255, 45, 138, 0.08);

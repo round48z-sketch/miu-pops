@@ -636,6 +636,12 @@
     const id = getDifficultyId();
     if (id === "insane" || id === "miu") diffDisplayEl.setAttribute("data-mode", id);
     else diffDisplayEl.removeAttribute("data-mode");
+    updateGameBackground();
+  }
+
+  function updateGameBackground() {
+    if (!screens.game) return;
+    screens.game.dataset.gameLevel = String(Math.min(5, Math.max(1, homeLevel)));
   }
 
   function setHomeLevel(level) {
@@ -1876,7 +1882,7 @@
     }
   }
 
-  const BOARD_BG_ALPHA = 0.62;
+  const BOARD_BG_ALPHA = 0.34;
 
   function drawBoardBg(w, h) {
     const bg = ctx.createLinearGradient(0, 0, 0, h);
@@ -1925,112 +1931,18 @@
     const t = now * 0.001;
     bgCtx.clearRect(0, 0, w, h);
 
-    const base = bgCtx.createLinearGradient(0, 0, w, h);
-    base.addColorStop(0, "#2a1438");
-    base.addColorStop(0.45, "#1e0e28");
-    base.addColorStop(1, "#120818");
-    bgCtx.fillStyle = base;
-    bgCtx.fillRect(0, 0, w, h);
-
-    const miuX = w * 0.5;
-    const miuY = h * 0.38;
-    const breathe = 1 + Math.sin(t * 1.2) * 0.04;
-    const auraR = w * 0.38 * breathe;
-
-    const aura = bgCtx.createRadialGradient(miuX, miuY, 0, miuX, miuY, auraR);
-    aura.addColorStop(0, "rgba(255, 140, 220, 0.22)");
-    aura.addColorStop(0.45, "rgba(180, 100, 255, 0.1)");
-    aura.addColorStop(1, "rgba(255, 60, 180, 0)");
-    bgCtx.fillStyle = aura;
-    bgCtx.fillRect(0, 0, w, h);
-
-    for (let i = 0; i < 3; i++) {
-      const ringR = w * (0.22 + i * 0.08) * breathe;
-      bgCtx.beginPath();
-      bgCtx.arc(miuX, miuY, ringR, t * 0.3 + i, t * 0.3 + i + Math.PI * 1.2);
-      bgCtx.strokeStyle = i % 2 === 0 ? "rgba(120, 220, 255, 0.12)" : "rgba(255, 120, 200, 0.14)";
-      bgCtx.lineWidth = 1.5;
-      bgCtx.stroke();
-    }
-
-    const faceR = w * 0.14 * breathe;
-    const faceGrad = bgCtx.createRadialGradient(
-      miuX - faceR * 0.2,
-      miuY - faceR * 0.2,
-      0,
-      miuX,
-      miuY,
-      faceR
-    );
-    faceGrad.addColorStop(0, "rgba(255, 200, 235, 0.35)");
-    faceGrad.addColorStop(0.6, "rgba(255, 120, 200, 0.18)");
-    faceGrad.addColorStop(1, "rgba(180, 80, 200, 0.05)");
-    bgCtx.fillStyle = faceGrad;
-    bgCtx.beginPath();
-    bgCtx.arc(miuX, miuY, faceR, 0, Math.PI * 2);
-    bgCtx.fill();
-
-    bgCtx.fillStyle = "rgba(255, 220, 245, 0.55)";
-    const eyeY = miuY - faceR * 0.08;
-    const eyeDX = faceR * 0.28;
-    bgCtx.beginPath();
-    bgCtx.ellipse(miuX - eyeDX, eyeY, faceR * 0.09, faceR * 0.11, 0, 0, Math.PI * 2);
-    bgCtx.ellipse(miuX + eyeDX, eyeY, faceR * 0.09, faceR * 0.11, 0, 0, Math.PI * 2);
-    bgCtx.fill();
-
-    bgCtx.strokeStyle = "rgba(255, 180, 220, 0.4)";
-    bgCtx.lineWidth = 1.5;
-    bgCtx.beginPath();
-    bgCtx.arc(miuX, miuY + faceR * 0.18, faceR * 0.2, 0.15 * Math.PI, 0.85 * Math.PI);
-    bgCtx.stroke();
-
-    bgCtx.font = `600 ${Math.floor(w * 0.055)}px "Hiragino Sans", sans-serif`;
-    bgCtx.textAlign = "center";
-    bgCtx.fillStyle = "rgba(255, 160, 220, 0.2)";
-    bgCtx.fillText("MIU", miuX, miuY + faceR * 1.15);
-
-    for (const hrt of bgHearts) {
-      const floatY = ((hrt.y + Math.sin(t * 0.8 + hrt.phase) * 0.02) % 1.1) - 0.05;
-      const x = hrt.x * w;
-      const y = floatY * h;
-      const pulse = 0.85 + Math.sin(t * 1.5 + hrt.phase) * 0.15;
-      const alpha = 0.12 + Math.sin(t + hrt.phase) * 0.06;
-      drawHeartPath(bgCtx, x, y, hrt.size * pulse, hrt.rot + t * hrt.drift * 50);
-      bgCtx.strokeStyle = `rgba(255, 120, 200, ${alpha})`;
-      bgCtx.lineWidth = 1.2;
-      bgCtx.shadowColor = "rgba(255, 80, 180, 0.5)";
-      bgCtx.shadowBlur = 8;
-      bgCtx.stroke();
-      bgCtx.shadowBlur = 0;
+    for (let y = 0; y < ROWS; y++) {
+      for (let x = 0; x < COLS; x++) {
+        bgCtx.strokeStyle = "rgba(255, 140, 220, 0.07)";
+        bgCtx.strokeRect((x * w) / COLS, (y * h) / ROWS, w / COLS, h / ROWS);
+      }
     }
 
     for (const sp of bgSparkles) {
-      const tw = 0.35 + Math.sin(t * sp.speed + sp.phase) * 0.65;
-      const sx = sp.x * w;
-      const sy = sp.y * h;
-      const sz = sp.size * tw;
-      bgCtx.save();
-      bgCtx.translate(sx, sy);
-      bgCtx.rotate(t * 0.5 + sp.phase);
-      bgCtx.fillStyle = `rgba(255, 240, 255, ${0.3 * tw})`;
-      bgCtx.shadowColor = "#ff9ee0";
-      bgCtx.shadowBlur = 6 * tw;
+      const pulse = 0.35 + Math.sin(t * sp.speed + sp.phase) * 0.25;
+      bgCtx.fillStyle = `rgba(200, 240, 255, ${0.08 * pulse})`;
       bgCtx.beginPath();
-      bgCtx.moveTo(0, -sz);
-      bgCtx.lineTo(sz * 0.28, 0);
-      bgCtx.lineTo(0, sz);
-      bgCtx.lineTo(-sz * 0.28, 0);
-      bgCtx.closePath();
-      bgCtx.fill();
-      bgCtx.restore();
-    }
-
-    for (let i = 0; i < 6; i++) {
-      const bx = w * (0.15 + i * 0.14) + Math.sin(t * 0.6 + i) * 8;
-      const by = h * 0.82 + Math.cos(t * 0.5 + i * 1.3) * 6;
-      bgCtx.fillStyle = `rgba(140, 220, 255, ${0.08 + Math.sin(t + i) * 0.04})`;
-      bgCtx.beginPath();
-      bgCtx.arc(bx, by, 2, 0, Math.PI * 2);
+      bgCtx.arc(sp.x * w, sp.y * h, sp.size, 0, Math.PI * 2);
       bgCtx.fill();
     }
   }
@@ -2196,6 +2108,7 @@
     });
   });
   setHomeLevel(1);
+  updateGameBackground();
 
   const settingsPanel = $("settings-panel");
   const volBgm = $("vol-bgm");

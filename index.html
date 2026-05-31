@@ -7,7 +7,7 @@
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
   <meta name="theme-color" content="#0a0012">
   <title>MIU POPS</title>
-  <link rel="stylesheet" href="style.css?v=8">
+  <link rel="stylesheet" href="style.css?v=9">
 </head>
 <body class="is-home">
   <audio id="bgm-audio" src="OP.mp3" loop preload="auto" playsinline></audio>
@@ -170,6 +170,22 @@
           <span class="stat-label">SCORE</span>
           <p id="final-score" class="stat-value stat-value--final">0</p>
         </div>
+        <div class="go-ad" id="go-ad" hidden>
+          <p class="go-ad__eyebrow">♡ MIU POPS PICK ♡</p>
+          <a
+            class="go-ad__card"
+            id="go-ad-link"
+            href="#"
+            target="_blank"
+            rel="noopener noreferrer"
+          >
+            <span class="go-ad__jacket-wrap">
+              <img class="go-ad__jacket" id="go-ad-jacket" width="120" height="120" alt="">
+            </span>
+            <span class="go-ad__title" id="go-ad-title"></span>
+            <span class="go-ad__cta">Spotifyで聴く ♪</span>
+          </a>
+        </div>
         <div class="game-over-actions">
           <button type="button" class="neon-btn" id="btn-retry-over">RETRY</button>
           <button type="button" class="home-btn" id="btn-home-over">HOME</button>
@@ -178,6 +194,6 @@
     </section>
   </div>
 
-  <script src="game.js?v=36"></script>
+  <script src="game.js?v=38"></script>
 </body>
 </html>

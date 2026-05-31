@@ -285,11 +285,89 @@
     };
   })();
 
+  const GAME_TRACKS = [
+    {
+      src: "song1.mp3",
+      ad: {
+        title: "キラメキフィーバー",
+        jacket: "kirameki.jpg",
+        spotify: "https://open.spotify.com/intl-ja/track/6FwegiT1StQcQK4zSJEZ5X?si=eeaca5b838314095",
+      },
+    },
+    {
+      src: "song2.mp3",
+      ad: {
+        title: "依存スイッチ",
+        jacket: "izon.jpg",
+        spotify: "https://open.spotify.com/intl-ja/track/0rQOKHqwbgZuwXjuewZ3M0?si=d3224083378d445b",
+      },
+    },
+    {
+      src: "song3.mp3",
+      ad: {
+        title: "Fire Night Energy",
+        jacket: "fire.jpg",
+        spotify: "https://open.spotify.com/intl-ja/track/64ENDNvfw95DX9v45m1kKe?si=63cfbacdd4c54678",
+      },
+    },
+  ];
+
+  const GameOverAd = (function () {
+    const panel = () => $("go-ad");
+    const link = () => $("go-ad-link");
+    const jacket = () => $("go-ad-jacket");
+    const title = () => $("go-ad-title");
+    let lastIndex = -1;
+
+    function pickIndex() {
+      if (GAME_TRACKS.length <= 1) return 0;
+      let idx = lastIndex;
+      while (idx === lastIndex) {
+        idx = Math.floor(Math.random() * GAME_TRACKS.length);
+      }
+      return idx;
+    }
+
+    return {
+      showRandom() {
+        const el = panel();
+        if (!el || !GAME_TRACKS.length) return;
+        const idx = pickIndex();
+        lastIndex = idx;
+        const ad = GAME_TRACKS[idx].ad;
+        const linkEl = link();
+        const jacketEl = jacket();
+        const titleEl = title();
+        if (linkEl) {
+          linkEl.href = ad.spotify;
+          linkEl.setAttribute("aria-label", ad.title + " を Spotify で聴く");
+        }
+        if (jacketEl) {
+          jacketEl.src = ad.jacket;
+          jacketEl.alt = ad.title + " ジャケット";
+        }
+        if (titleEl) titleEl.textContent = ad.title;
+        el.hidden = false;
+      },
+      hide() {
+        const el = panel();
+        if (el) el.hidden = true;
+      },
+    };
+  })();
+
   const GameBgm = (function () {
-    const TRACKS = ["song1.mp3", "song2.mp3", "song3.mp3"];
     let audio = null;
     let lastIndex = -1;
     let active = false;
+
+    function trackSrc(i) {
+      return GAME_TRACKS[i] && GAME_TRACKS[i].src;
+    }
+
+    function trackCount() {
+      return GAME_TRACKS.length;
+    }
 
     function readVolume() {
       const saved = parseFloat(localStorage.getItem(BGM_STORAGE_KEY));
@@ -298,10 +376,7 @@
     }
 
     function isGameScreenActive() {
-      return (
-        screens.game.classList.contains("active") ||
-        screens.over.classList.contains("active")
-      );
+      return screens.game.classList.contains("active");
     }
 
     function getAudio() {
@@ -322,10 +397,11 @@
     }
 
     function pickIndex() {
-      if (TRACKS.length <= 1) return 0;
+      const n = trackCount();
+      if (n <= 1) return 0;
       let idx = lastIndex;
       while (idx === lastIndex) {
-        idx = Math.floor(Math.random() * TRACKS.length);
+        idx = Math.floor(Math.random() * n);
       }
       return idx;
     }
@@ -337,7 +413,8 @@
       a.loop = false;
       a.volume = vol;
       lastIndex = index;
-      const nextSrc = TRACKS[index];
+      const nextSrc = trackSrc(index);
+      if (!nextSrc) return;
       if (!a.src || !a.src.endsWith(nextSrc)) {
         a.src = nextSrc;
         a.load();
@@ -549,10 +626,12 @@
     document.body.classList.toggle("is-home", name === "home");
     if (name === "home") {
       GameBgm.stop();
+      GameOverAd.hide();
       Bgm.play();
     } else {
       Bgm.pause();
     }
+    if (name !== "over") GameOverAd.hide();
     if (name !== "game") stopDropLoop();
     if (name === "game") {
       requestAnimationFrame(() => {
@@ -835,6 +914,8 @@
     if (!canPlace(pair.x, pair.y, rot)) {
       gameOver = true;
       finalScoreEl.textContent = score;
+      GameBgm.stop();
+      GameOverAd.showRandom();
       Sfx.gameOver();
       showScreen("over");
     }

@@ -285,8 +285,101 @@
     };
   })();
 
+  const GameBgm = (function () {
+    const TRACKS = ["song1.mp3", "song2.mp3", "song3.mp3"];
+    let audio = null;
+    let lastIndex = -1;
+    let active = false;
+
+    function readVolume() {
+      const saved = parseFloat(localStorage.getItem(BGM_STORAGE_KEY));
+      if (Number.isFinite(saved)) return Math.min(1, Math.max(0, saved));
+      return 0.7;
+    }
+
+    function isGameScreenActive() {
+      return (
+        screens.game.classList.contains("active") ||
+        screens.over.classList.contains("active")
+      );
+    }
+
+    function getAudio() {
+      if (!audio) {
+        const el = document.getElementById("game-bgm-audio");
+        audio = el || new Audio();
+        audio.loop = false;
+        audio.preload = "auto";
+        audio.setAttribute("playsinline", "");
+        audio.setAttribute("webkit-playsinline", "");
+        audio.addEventListener("ended", () => {
+          if (!active || !isGameScreenActive()) return;
+          if (readVolume() <= 0) return;
+          playRandom();
+        });
+      }
+      return audio;
+    }
+
+    function pickIndex() {
+      if (TRACKS.length <= 1) return 0;
+      let idx = lastIndex;
+      while (idx === lastIndex) {
+        idx = Math.floor(Math.random() * TRACKS.length);
+      }
+      return idx;
+    }
+
+    function playIndex(index) {
+      const vol = readVolume();
+      if (vol <= 0) return;
+      const a = getAudio();
+      a.loop = false;
+      a.volume = vol;
+      lastIndex = index;
+      const nextSrc = TRACKS[index];
+      if (!a.src || !a.src.endsWith(nextSrc)) {
+        a.src = nextSrc;
+        a.load();
+      }
+      const p = a.play();
+      if (p && typeof p.then === "function") p.catch(() => {});
+    }
+
+    function playRandom() {
+      playIndex(pickIndex());
+    }
+
+    return {
+      startSession() {
+        Bgm.pause();
+        active = true;
+        lastIndex = -1;
+        const a = getAudio();
+        a.pause();
+        a.currentTime = 0;
+        if (readVolume() <= 0) return;
+        playRandom();
+      },
+      stop() {
+        active = false;
+        lastIndex = -1;
+        if (!audio) return;
+        audio.pause();
+        audio.currentTime = 0;
+        audio.removeAttribute("src");
+        audio.load();
+      },
+      setVolume(v) {
+        if (!audio) return;
+        audio.volume = Math.min(1, Math.max(0, v));
+      },
+    };
+  })();
+
+  const BGM_STORAGE_KEY = "miu-pops-bgm";
+
   const Bgm = (function () {
-    const BGM_STORAGE_KEY = "miu-pops-bgm";
     const SRC = "OP.mp3";
     let audio = null;
     let volume = 0.7;
@@ -359,6 +452,9 @@
 
     function play() {
       if (!screens.home.classList.contains("active") || volume <= 0) return;
+      if (screens.game.classList.contains("active") || screens.over.classList.contains("active")) {
+        return;
+      }
       const a = getAudio();
       a.loop = true;
       a.volume = volume;
@@ -429,6 +525,7 @@
         volume = Math.min(1, Math.max(0, v));
         getAudio().volume = volume;
         saveVolume();
+        GameBgm.setVolume(volume);
         if (volume <= 0) hideBootSplash();
       },
       getVolume() {
@@ -451,6 +548,7 @@
     document.body.classList.toggle("is-playing", name === "game");
     document.body.classList.toggle("is-home", name === "home");
     if (name === "home") {
+      GameBgm.stop();
       Bgm.play();
     } else {
       Bgm.pause();
@@ -2070,6 +2168,7 @@
     resetSpeedRamp();
     initBgDecor();
     showScreen("game");
+    GameBgm.startSession();
     layoutGameScreen();
     resizeCanvas();
     spawnPair();

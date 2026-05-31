@@ -10,7 +10,8 @@
   <link rel="stylesheet" href="style.css?v=8">
 </head>
 <body class="is-home">
-  <audio id="bgm-audio" src="OP.mp3" loop preload="auto"></audio>
+  <audio id="bgm-audio" src="OP.mp3" loop preload="auto" playsinline></audio>
+  <audio id="game-bgm-audio" preload="auto" playsinline></audio>
   <script>
     (function () {
       var a = document.getElementById("bgm-audio");
@@ -177,6 +178,6 @@
     </section>
   </div>
 
-  <script src="game.js?v=35"></script>
+  <script src="game.js?v=36"></script>
 </body>
 </html>

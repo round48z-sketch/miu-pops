@@ -79,11 +79,11 @@
 
   const BOARD_SHELL_CHROME = 40;
   const BOARD_SHELL_CHROME_TALL = 52;
-  const BOARD_SHELL_CHROME_MOBILE = 6;
+  const BOARD_SHELL_CHROME_MOBILE = 4;
   const BOARD_WIDTH_CAP = 320;
-  const BOARD_WIDTH_CAP_MOBILE = 520;
-  const BOARD_WIDTH_RATIO = 0.94;
-  const BOARD_WIDTH_RATIO_MOBILE = 0.98;
+  const BOARD_WIDTH_CAP_MOBILE = 640;
+  const BOARD_WIDTH_RATIO = 0.96;
+  const BOARD_WIDTH_RATIO_MOBILE = 1;
 
   const Sfx = (function () {
     let ctx = null;

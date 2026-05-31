@@ -1937,21 +1937,26 @@ body.is-playing .ctrl-btn {
   }
 
   .board-shell {
-    width: var(--game-layout-w, min(98vw, 420px));
-    max-width: calc(100% - 1px);
+    width: var(--game-layout-w, 100%);
+    max-width: 100%;
     height: auto;
     margin: 0 auto;
-    padding: 0 1px;
+    padding: 0;
   }
 
   .board-frame-outer {
-    padding: 2px;
-    border-radius: 11px;
+    padding: 1px;
+    border-radius: 10px;
   }
 
   .board-frame {
-    padding: 3px;
-    border-radius: 9px;
+    padding: 2px;
+    border-radius: 8px;
+  }
+
+  .frame-crest,
+  .frame-heart-side {
+    display: none;
   }
 
   .board-stage {
@@ -1961,133 +1966,150 @@ body.is-playing .ctrl-btn {
   }
 
   .hud {
-    padding: 0 2px 0;
-    gap: 2px;
+    padding: 0 1px 0;
+    gap: 1px;
   }
 
   .diff-badge,
   .speed-badge {
     width: auto;
-    min-width: 34px;
+    min-width: 30px;
     flex: 0 1 auto;
-    padding: 2px 3px;
-    border-radius: 8px;
+    padding: 1px 2px;
+    border-radius: 7px;
   }
 
   .diff-badge-label,
   .speed-badge-label {
-    font-size: 0.34rem;
-    letter-spacing: 0.06em;
+    font-size: 0.32rem;
+    letter-spacing: 0.05em;
   }
 
   .diff-badge-value {
-    font-size: 0.42rem;
+    font-size: 0.4rem;
   }
 
   .speed-badge-value {
-    font-size: 0.46rem;
+    font-size: 0.42rem;
   }
 
   .stat-card {
-    padding: 3px 6px 4px;
-    border-radius: 10px;
+    padding: 2px 5px 3px;
+    border-radius: 8px;
   }
 
   .stat-label {
-    font-size: 0.36rem;
+    font-size: 0.34rem;
   }
 
   .stat-value {
-    font-size: clamp(1rem, 5.5vw, 1.35rem);
+    font-size: clamp(0.88rem, 5vw, 1.15rem);
+    line-height: 1;
   }
 
   .preview-card {
     width: auto;
-    min-width: 38px;
+    min-width: 32px;
     flex-shrink: 0;
-    padding: 2px 3px 1px;
-    border-radius: 9px;
+    padding: 1px 2px 0;
+    border-radius: 8px;
   }
 
   .preview-label {
-    font-size: 0.36rem;
+    font-size: 0.32rem;
   }
 
   #next-preview {
-    max-height: 56px;
+    max-height: 44px;
   }
 
   .controls-panel {
-    padding: 1px 3px max(1px, var(--safe-bottom));
-    gap: 3px;
+    padding: 0 2px max(0px, var(--safe-bottom));
+    gap: 2px;
   }
 
   .controls {
     grid-template-columns: 1.15fr 0.95fr 1.15fr 1.15fr;
-    gap: 4px;
+    gap: 3px;
   }
 
   .ctrl-btn {
-    min-height: 40px;
-    border-radius: 9px;
-    padding: 0.12rem;
+    min-height: 36px;
+    border-radius: 8px;
+    padding: 0.08rem;
   }
 
   #btn-left,
   #btn-right,
   #btn-rotate {
-    min-height: 44px;
-    padding: 0.2rem 0.12rem;
+    min-height: 38px;
+    padding: 0.15rem 0.08rem;
   }
 
   #btn-left .ctrl-icon,
   #btn-right .ctrl-icon,
   #btn-rotate .ctrl-icon {
-    font-size: 1.2rem;
+    font-size: 1.1rem;
   }
 
   #btn-left .ctrl-label,
   #btn-right .ctrl-label,
   #btn-rotate .ctrl-label {
-    font-size: 0.46rem;
+    font-size: 0.42rem;
   }
 
   #btn-down {
-    min-height: 42px;
+    min-height: 36px;
   }
 
   .ctrl-btn--hard {
-    width: min(88%, 280px);
-    min-height: 52px;
-    padding: 0.45rem 1rem;
+    width: min(86%, 260px);
+    min-height: 44px;
+    padding: 0.35rem 0.85rem;
   }
 
   .ctrl-btn--hard .ctrl-icon {
-    font-size: 1.55rem;
+    font-size: 1.4rem;
   }
 
   .ctrl-btn--hard .ctrl-label {
-    font-size: 0.72rem;
+    font-size: 0.66rem;
   }
 
   .ctrl-icon {
-    font-size: 0.95rem;
+    font-size: 0.88rem;
   }
 
   .ctrl-label {
-    font-size: 0.44rem;
+    font-size: 0.4rem;
   }
 
   .action-bar {
-    gap: 4px;
+    gap: 3px;
   }
 
   .neon-btn--compact,
   .home-btn {
-    min-height: 1.85rem;
-    padding-top: 0.32rem;
-    padding-bottom: 0.32rem;
-    font-size: 0.56rem;
+    min-height: 1.65rem;
+    padding-top: 0.28rem;
+    padding-bottom: 0.28rem;
+    font-size: 0.52rem;
+  }
+
+  body.is-playing .board-frame-outer {
+    padding: 1px;
+  }
+
+  body.is-playing .board-frame {
+    padding: 2px;
+  }
+
+  body.is-playing .controls-panel {
+    background: linear-gradient(
+      to top,
+      rgba(10, 0, 18, 0.82) 40%,
+      rgba(10, 0, 18, 0.35) 100%
+    );
   }
 }
 

@@ -1475,7 +1475,7 @@ body.is-playing .ctrl-btn {
   }
 
   .board-shell {
-    width: var(--game-layout-w, min(68vw, 320px));
+    width: var(--game-layout-w, min(78vw, 360px));
     max-width: calc(100% - 4px);
     height: auto;
     margin: 0 auto;
@@ -1557,20 +1557,44 @@ body.is-playing .ctrl-btn {
   }
 
   .controls {
-    gap: 5px;
+    grid-template-columns: 1.15fr 0.95fr 1.15fr 1.15fr;
+    gap: 6px;
   }
 
   .ctrl-btn {
-    min-height: 42px;
+    min-height: 48px;
     border-radius: 10px;
   }
 
+  #btn-left,
+  #btn-right,
+  #btn-rotate {
+    min-height: 56px;
+    padding: 0.35rem 0.2rem;
+  }
+
+  #btn-left .ctrl-icon,
+  #btn-right .ctrl-icon,
+  #btn-rotate .ctrl-icon {
+    font-size: 1.4rem;
+  }
+
+  #btn-left .ctrl-label,
+  #btn-right .ctrl-label,
+  #btn-rotate .ctrl-label {
+    font-size: 0.52rem;
+  }
+
+  #btn-down {
+    min-height: 50px;
+  }
+
   .ctrl-btn--hard {
-    min-height: 38px;
+    min-height: 42px;
   }
 
   .ctrl-icon {
-    font-size: 1rem;
+    font-size: 1.05rem;
   }
 
   .ctrl-label {

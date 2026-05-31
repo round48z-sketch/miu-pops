@@ -78,11 +78,11 @@
 
   const BOARD_SHELL_CHROME = 40;
   const BOARD_SHELL_CHROME_TALL = 52;
-  const BOARD_SHELL_CHROME_MOBILE = 24;
+  const BOARD_SHELL_CHROME_MOBILE = 14;
   const BOARD_WIDTH_CAP = 320;
   const BOARD_WIDTH_CAP_MOBILE = 480;
   const BOARD_WIDTH_RATIO = 0.9;
-  const BOARD_WIDTH_RATIO_MOBILE = 0.94;
+  const BOARD_WIDTH_RATIO_MOBILE = 0.68;
 
   const Sfx = (function () {
     let ctx = null;
@@ -332,18 +332,15 @@
       gap * 2;
 
     const layoutW = Math.max(168, screen.clientWidth - padX);
+    const targetBoardW = Math.floor(layoutW * widthRatio);
     let maxStageH = Math.max(120, availFromScreen - chrome);
     let maxW = Math.max(
       168,
-      Math.min(
-        Math.floor(layoutW * widthRatio),
-        widthCap,
-        Math.floor(maxStageH * boardAspect)
-      )
+      Math.min(targetBoardW, widthCap, Math.floor(maxStageH * boardAspect))
     );
 
     screen.style.setProperty("--game-layout-w", maxW + "px");
-    shell.style.width = "100%";
+    shell.style.width = isMobile ? maxW + "px" : "100%";
     shell.style.removeProperty("max-height");
 
     if (boardWrap) {
@@ -353,13 +350,13 @@
         maxW = Math.max(
           168,
           Math.min(
-            maxW,
-            Math.floor(layoutW * widthRatio),
+            targetBoardW,
             widthCap,
             Math.floor(wrapAvail * boardAspect)
           )
         );
         screen.style.setProperty("--game-layout-w", maxW + "px");
+        if (isMobile) shell.style.width = maxW + "px";
       }
     }
 

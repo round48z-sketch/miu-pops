@@ -1430,7 +1430,7 @@ body.is-playing .ctrl-btn {
   }
 }
 
-/* スマホ：正方形セル・縦長盤面（480px以下） */
+/* スマホ：テトリス風サイズ（盤面中央・HUD/操作は全幅） */
 @media (max-width: 480px) {
   #app {
     max-width: none;
@@ -1447,8 +1447,8 @@ body.is-playing .ctrl-btn {
   }
 
   #screen-game.active {
-    align-items: center;
-    gap: 0.2rem;
+    align-items: stretch;
+    gap: 0.15rem;
     padding-top: max(2px, var(--safe-top));
     padding-bottom: max(2px, var(--safe-bottom));
     padding-left: env(safe-area-inset-left, 0px);
@@ -1456,29 +1456,30 @@ body.is-playing .ctrl-btn {
   }
 
   #screen-game .hud,
-  #screen-game .board-wrap,
   #screen-game .controls-panel {
-    width: var(--game-layout-w, min(94vw, 480px));
-    max-width: min(94vw, 480px);
-    margin-inline: auto;
-  }
-
-  #screen-game .hud,
-  #screen-game .controls-panel {
+    width: 100%;
+    max-width: none;
+    margin-inline: 0;
     flex-shrink: 0;
   }
 
   #screen-game .board-wrap {
+    width: 100%;
+    max-width: none;
+    margin-inline: 0;
     flex: 1 1 auto;
     min-height: 0;
+    display: flex;
     align-items: center;
     justify-content: center;
   }
 
   .board-shell {
-    width: 100%;
+    width: var(--game-layout-w, min(68vw, 320px));
+    max-width: calc(100% - 4px);
     height: auto;
-    padding: 2px 4px;
+    margin: 0 auto;
+    padding: 2px 3px;
   }
 
   .board-frame-outer {
@@ -1498,94 +1499,94 @@ body.is-playing .ctrl-btn {
   }
 
   .hud {
-    padding: 0 2px 2px;
+    padding: 0 4px 2px;
     gap: 4px;
   }
 
   .diff-badge,
   .speed-badge {
     width: auto;
-    min-width: 42px;
+    min-width: 40px;
     flex: 0 1 auto;
-    padding: 5px 5px;
-    border-radius: 12px;
+    padding: 4px 5px;
+    border-radius: 11px;
   }
 
   .diff-badge-label,
   .speed-badge-label {
-    font-size: 0.38rem;
-    letter-spacing: 0.1em;
+    font-size: 0.36rem;
+    letter-spacing: 0.08em;
   }
 
   .diff-badge-value {
-    font-size: 0.48rem;
+    font-size: 0.46rem;
   }
 
   .speed-badge-value {
-    font-size: 0.52rem;
+    font-size: 0.5rem;
   }
 
   .stat-card {
-    padding: 6px 10px 8px;
-    border-radius: 16px;
+    padding: 5px 8px 7px;
+    border-radius: 14px;
   }
 
   .stat-label {
-    font-size: 0.42rem;
+    font-size: 0.4rem;
   }
 
   .stat-value {
-    font-size: clamp(1.25rem, 6.5vw, 1.75rem);
+    font-size: clamp(1.15rem, 6vw, 1.6rem);
   }
 
   .preview-card {
     width: auto;
-    min-width: 50px;
+    min-width: 48px;
     flex-shrink: 0;
-    padding: 5px 5px 4px;
-    border-radius: 14px;
+    padding: 4px 5px 3px;
+    border-radius: 12px;
   }
 
   .preview-label {
-    font-size: 0.42rem;
+    font-size: 0.4rem;
   }
 
   .controls-panel {
-    padding: 2px 2px max(2px, var(--safe-bottom));
+    padding: 2px 4px max(2px, var(--safe-bottom));
     gap: 4px;
   }
 
   .controls {
-    gap: 6px;
+    gap: 5px;
   }
 
   .ctrl-btn {
-    min-height: 44px;
+    min-height: 42px;
     border-radius: 10px;
   }
 
   .ctrl-btn--hard {
-    min-height: 40px;
+    min-height: 38px;
   }
 
   .ctrl-icon {
-    font-size: 1.05rem;
+    font-size: 1rem;
   }
 
   .ctrl-label {
-    font-size: 0.5rem;
+    font-size: 0.48rem;
   }
 
   .action-bar {
-    gap: 6px;
+    gap: 5px;
   }
 
   .neon-btn--compact,
   .home-btn {
-    min-height: 2.25rem;
-    padding-top: 0.45rem;
-    padding-bottom: 0.45rem;
-    font-size: 0.62rem;
+    min-height: 2.1rem;
+    padding-top: 0.4rem;
+    padding-bottom: 0.4rem;
+    font-size: 0.6rem;
   }
 }
 

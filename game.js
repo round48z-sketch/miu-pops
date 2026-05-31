@@ -2202,21 +2202,41 @@
   const volSe = $("vol-se");
   const volBgmVal = $("vol-bgm-val");
   const volSeVal = $("vol-se-val");
+  const volBgmMeter = $("vol-bgm-meter");
+  const volSeMeter = $("vol-se-meter");
   let sePreviewTimer = null;
 
   function pct(v) {
     return Math.round(v * 100);
   }
 
+  function updateVolumeUI(kind, valuePct) {
+    const p = Math.min(100, Math.max(0, Math.round(Number(valuePct) || 0)));
+    const text = p + "%";
+    if (kind === "bgm") {
+      if (volBgm) {
+        volBgm.value = String(p);
+        volBgm.setAttribute("aria-valuenow", String(p));
+        volBgm.setAttribute("aria-valuetext", "BGM音量 " + p + "パーセント");
+        volBgm.style.setProperty("--vol-pct", p + "%");
+      }
+      if (volBgmVal) volBgmVal.textContent = text;
+      if (volBgmMeter) volBgmMeter.style.width = p + "%";
+    } else {
+      if (volSe) {
+        volSe.value = String(p);
+        volSe.setAttribute("aria-valuenow", String(p));
+        volSe.setAttribute("aria-valuetext", "SE音量 " + p + "パーセント");
+        volSe.style.setProperty("--vol-pct", p + "%");
+      }
+      if (volSeVal) volSeVal.textContent = text;
+      if (volSeMeter) volSeMeter.style.width = p + "%";
+    }
+  }
+
   function syncVolumeSliders() {
-    if (volBgm) {
-      volBgm.value = String(pct(Bgm.getVolume()));
-      if (volBgmVal) volBgmVal.textContent = volBgm.value;
-    }
-    if (volSe) {
-      volSe.value = String(pct(Sfx.getVolume()));
-      if (volSeVal) volSeVal.textContent = volSe.value;
-    }
+    updateVolumeUI("bgm", pct(Bgm.getVolume()));
+    updateVolumeUI("se", pct(Sfx.getVolume()));
   }
 
   function openSettings() {
@@ -2250,10 +2270,9 @@
   if (volBgm) {
     volBgm.addEventListener("input", () => {
       unlockAudio();
-      const v = Number(volBgm.value) / 100;
-      Bgm.setVolume(v);
-      if (volBgmVal) volBgmVal.textContent = volBgm.value;
-      volBgm.setAttribute("aria-valuenow", volBgm.value);
+      const p = Number(volBgm.value);
+      Bgm.setVolume(p / 100);
+      updateVolumeUI("bgm", p);
       Bgm.ensurePlayingOnHome();
     });
   }
@@ -2261,10 +2280,9 @@
   if (volSe) {
     volSe.addEventListener("input", () => {
       unlockAudio();
-      const v = Number(volSe.value) / 100;
-      Sfx.setVolume(v);
-      if (volSeVal) volSeVal.textContent = volSe.value;
-      volSe.setAttribute("aria-valuenow", volSe.value);
+      const p = Number(volSe.value);
+      Sfx.setVolume(p / 100);
+      updateVolumeUI("se", p);
       if (sePreviewTimer) clearTimeout(sePreviewTimer);
       sePreviewTimer = setTimeout(() => Sfx.preview(), 80);
     });

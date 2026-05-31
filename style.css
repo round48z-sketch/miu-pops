@@ -521,10 +521,21 @@ body.is-home .neon-btn--hero {
 
 .settings-row {
   display: grid;
-  grid-template-columns: 2.4rem 1fr 2rem;
+  grid-template-columns: 2.4rem 1fr 2.6rem;
   align-items: center;
   gap: 8px;
   margin-bottom: 12px;
+}
+
+.settings-row--vol {
+  align-items: start;
+}
+
+.settings-vol {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+  padding-top: 2px;
 }
 
 .settings-label {
@@ -532,24 +543,62 @@ body.is-home .neon-btn--hero {
   font-weight: 700;
   letter-spacing: 0.12em;
   color: rgba(255, 200, 235, 0.9);
+  padding-top: 4px;
 }
 
 .settings-val {
-  font-size: 0.62rem;
-  font-weight: 700;
-  letter-spacing: 0.06em;
+  font-size: 0.68rem;
+  font-weight: 800;
+  letter-spacing: 0.04em;
   color: var(--neon-cyan);
   text-align: right;
-  text-shadow: 0 0 8px rgba(126, 249, 255, 0.65);
+  padding-top: 2px;
+  text-shadow: 0 0 10px rgba(126, 249, 255, 0.75);
+  font-variant-numeric: tabular-nums;
+}
+
+.settings-meter {
+  height: 5px;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.1);
+  overflow: hidden;
+  box-shadow: inset 0 0 4px rgba(0, 0, 0, 0.35);
+}
+
+.settings-meter__fill {
+  height: 100%;
+  width: 0%;
+  border-radius: 999px;
+  transition: width 0.08s ease-out;
+}
+
+.settings-meter--bgm .settings-meter__fill {
+  background: linear-gradient(90deg, rgba(255, 79, 216, 0.85), rgba(255, 180, 240, 1));
+  box-shadow: 0 0 8px rgba(255, 79, 216, 0.65);
+}
+
+.settings-meter--se .settings-meter__fill {
+  background: linear-gradient(90deg, rgba(126, 249, 255, 0.85), rgba(180, 255, 255, 1));
+  box-shadow: 0 0 8px rgba(126, 249, 255, 0.55);
 }
 
 .settings-range {
   width: 100%;
-  height: 6px;
+  height: 8px;
   margin: 0;
+  --vol-pct: 70%;
   accent-color: var(--neon-pink);
   cursor: pointer;
   touch-action: manipulation;
+  background: transparent;
+}
+
+.settings-range--bgm {
+  accent-color: #ff6ed8;
+}
+
+.settings-range--se {
+  accent-color: #7ef9ff;
 }
 
 .neon-btn--settings-close {

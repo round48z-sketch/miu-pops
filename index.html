@@ -10,6 +10,17 @@
   <link rel="stylesheet" href="style.css">
 </head>
 <body class="is-home">
+  <audio id="bgm-audio" src="OP.mp3" loop preload="auto"></audio>
+  <script>
+    (function () {
+      var a = document.getElementById("bgm-audio");
+      if (!a) return;
+      var saved = parseFloat(localStorage.getItem("miu-pops-bgm"));
+      a.volume = Number.isFinite(saved) ? Math.max(0, Math.min(1, saved)) : 0.7;
+      var p = a.play();
+      if (p && p.catch) p.catch(function () {});
+    })();
+  </script>
   <div class="bg-grid" aria-hidden="true"></div>
   <div class="scanlines" aria-hidden="true"></div>
 
@@ -34,6 +45,12 @@
       <button type="button" class="neon-btn neon-btn--settings" id="btn-settings">SETTINGS</button>
       <button type="button" class="neon-btn neon-btn--hero" id="btn-start">START</button>
       <p class="hint">同じ色を4つ以上つなげよう</p>
+      </div>
+
+      <div id="boot-splash" class="boot-splash" hidden>
+        <p class="boot-splash__title">MIU POPS</p>
+        <p class="boot-splash__text">TAP TO START</p>
+        <p class="boot-splash__sub">タップして開始</p>
       </div>
 
       <div id="settings-panel" class="settings-panel" hidden role="dialog" aria-modal="true" aria-labelledby="settings-title">
@@ -150,6 +167,6 @@
     </section>
   </div>
 
-  <script src="game.js?v=28"></script>
+  <script src="game.js?v=29"></script>
 </body>
 </html>

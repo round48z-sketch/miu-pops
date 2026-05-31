@@ -290,7 +290,8 @@
     const SRC = "OP.mp3";
     let audio = null;
     let volume = 0.7;
-    let unlockRetryBound = false;
+    let bootSplash = null;
+    let bootCheckTimer = null;
 
     function loadVolume() {
       const saved = parseFloat(localStorage.getItem(BGM_STORAGE_KEY));
@@ -303,50 +304,132 @@
 
     function getAudio() {
       if (!audio) {
-        audio = new Audio(SRC);
-        audio.loop = true;
-        audio.preload = "auto";
-        audio.volume = volume;
+        const el = document.getElementById("bgm-audio");
+        if (el) {
+          audio = el;
+        } else {
+          audio = new Audio(SRC);
+          audio.loop = true;
+          audio.preload = "auto";
+        }
       }
       return audio;
     }
 
-    function bindUnlockRetry() {
-      if (unlockRetryBound) return;
-      unlockRetryBound = true;
-      const retry = () => {
-        unlockRetryBound = false;
-        play();
-      };
-      document.addEventListener("pointerdown", retry, { once: true, passive: true });
-      document.addEventListener("keydown", retry, { once: true });
+    function isPlaying() {
+      const a = audio;
+      return !!(a && !a.paused);
+    }
+
+    function hideBootSplash() {
+      if (bootSplash) bootSplash.hidden = true;
+      document.body.classList.remove("is-boot-waiting");
+    }
+
+    function showBootSplash() {
+      if (!screens.home.classList.contains("active")) return;
+      if (isPlaying() || volume <= 0) {
+        hideBootSplash();
+        return;
+      }
+      if (!bootSplash) bootSplash = $("boot-splash");
+      if (!bootSplash) return;
+      bootSplash.hidden = false;
+      document.body.classList.add("is-boot-waiting");
+    }
+
+    function scheduleBootCheck() {
+      if (bootCheckTimer) clearTimeout(bootCheckTimer);
+      bootCheckTimer = setTimeout(() => {
+        if (screens.home.classList.contains("active") && volume > 0 && !isPlaying()) {
+          showBootSplash();
+        } else {
+          hideBootSplash();
+        }
+      }, 450);
+    }
+
+    function onPlaySuccess() {
+      hideBootSplash();
+      if (bootCheckTimer) {
+        clearTimeout(bootCheckTimer);
+        bootCheckTimer = null;
+      }
     }
 
     function play() {
       if (!screens.home.classList.contains("active") || volume <= 0) return;
       const a = getAudio();
+      a.loop = true;
       a.volume = volume;
+      if (!a.paused && !a.ended) {
+        onPlaySuccess();
+        return;
+      }
       const p = a.play();
       if (p && typeof p.then === "function") {
-        p.then(() => {
-          unlockRetryBound = false;
-        }).catch(() => {
-          bindUnlockRetry();
-        });
+        p.then(onPlaySuccess).catch(() => scheduleBootCheck());
+      } else if (!a.paused) {
+        onPlaySuccess();
       }
+    }
+
+    function bindBootSplash() {
+      bootSplash = $("boot-splash");
+      if (!bootSplash) return;
+      const start = () => {
+        Sfx.resume();
+        if (volume <= 0) {
+          hideBootSplash();
+          return;
+        }
+        const a = getAudio();
+        a.loop = true;
+        a.volume = volume;
+        const p = a.play();
+        if (p && typeof p.then === "function") {
+          p.then(onPlaySuccess).catch(() => showBootSplash());
+        } else if (!a.paused) {
+          onPlaySuccess();
+        }
+      };
+      bootSplash.addEventListener("pointerdown", start);
+      bootSplash.addEventListener("keydown", (e) => {
+        if (e.key === "Enter" || e.key === " ") start();
+      });
+    }
+
+    function bindAudioEvents() {
+      const a = getAudio();
+      a.addEventListener("playing", onPlaySuccess);
+      a.addEventListener("canplaythrough", () => {
+        if (screens.home.classList.contains("active")) play();
+      });
+      window.addEventListener("pageshow", () => {
+        if (screens.home.classList.contains("active")) play();
+      });
     }
 
     loadVolume();
 
     return {
+      init() {
+        getAudio().volume = volume;
+        bindBootSplash();
+        bindAudioEvents();
+        play();
+        scheduleBootCheck();
+      },
       play,
       pause() {
         if (audio) audio.pause();
+        hideBootSplash();
       },
       setVolume(v) {
         volume = Math.min(1, Math.max(0, v));
         getAudio().volume = volume;
         saveVolume();
+        if (volume <= 0) hideBootSplash();
       },
       getVolume() {
         return volume;
@@ -2155,7 +2238,7 @@
 
   syncVolumeSliders();
 
-  Bgm.play();
+  Bgm.init();
 
   $("btn-settings").addEventListener("click", () => {
     unlockAudio();

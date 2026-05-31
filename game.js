@@ -1882,13 +1882,13 @@
     }
   }
 
-  const BOARD_BG_ALPHA = 0.34;
+  const BOARD_BG_ALPHA = 0.1;
 
   function drawBoardBg(w, h) {
     const bg = ctx.createLinearGradient(0, 0, 0, h);
-    bg.addColorStop(0, `rgba(34, 16, 42, ${BOARD_BG_ALPHA})`);
-    bg.addColorStop(0.5, `rgba(26, 12, 24, ${BOARD_BG_ALPHA * 0.95})`);
-    bg.addColorStop(1, `rgba(20, 8, 24, ${BOARD_BG_ALPHA * 0.9})`);
+    bg.addColorStop(0, `rgba(56, 14, 42, ${BOARD_BG_ALPHA})`);
+    bg.addColorStop(0.5, `rgba(40, 10, 32, ${BOARD_BG_ALPHA * 0.92})`);
+    bg.addColorStop(1, `rgba(28, 6, 24, ${BOARD_BG_ALPHA * 0.85})`);
     ctx.fillStyle = bg;
     ctx.fillRect(0, 0, w, h);
   }
@@ -1933,7 +1933,7 @@
 
     for (let y = 0; y < ROWS; y++) {
       for (let x = 0; x < COLS; x++) {
-        bgCtx.strokeStyle = "rgba(255, 140, 220, 0.07)";
+        bgCtx.strokeStyle = "rgba(255, 140, 220, 0.11)";
         bgCtx.strokeRect((x * w) / COLS, (y * h) / ROWS, w / COLS, h / ROWS);
       }
     }
@@ -1980,7 +1980,7 @@
     const cellH = h / ROWS;
     for (let y = 0; y < ROWS; y++) {
       for (let x = 0; x < COLS; x++) {
-        ctx.strokeStyle = "rgba(255, 120, 220, 0.05)";
+        ctx.strokeStyle = "rgba(255, 140, 220, 0.11)";
         ctx.strokeRect(x * cellW, y * cellH, cellW, cellH);
       }
     }

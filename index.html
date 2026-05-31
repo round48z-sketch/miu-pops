@@ -31,8 +31,27 @@
         <button type="button" class="level-btn" data-level="4" aria-pressed="false">4</button>
         <button type="button" class="level-btn" data-level="5" aria-pressed="false">5</button>
       </div>
+      <button type="button" class="neon-btn neon-btn--settings" id="btn-settings">SETTINGS</button>
       <button type="button" class="neon-btn neon-btn--hero" id="btn-start">START</button>
       <p class="hint">同じ色を4つ以上つなげよう</p>
+      </div>
+
+      <div id="settings-panel" class="settings-panel" hidden role="dialog" aria-modal="true" aria-labelledby="settings-title">
+        <button type="button" class="settings-panel__backdrop" id="settings-backdrop" aria-label="設定を閉じる"></button>
+        <div class="settings-panel__card">
+          <h2 id="settings-title" class="settings-title">SETTINGS</h2>
+          <div class="settings-row">
+            <label class="settings-label" for="vol-bgm">BGM</label>
+            <input type="range" id="vol-bgm" class="settings-range" min="0" max="100" value="70" aria-valuemin="0" aria-valuemax="100">
+            <span id="vol-bgm-val" class="settings-val" aria-hidden="true">70</span>
+          </div>
+          <div class="settings-row">
+            <label class="settings-label" for="vol-se">SE</label>
+            <input type="range" id="vol-se" class="settings-range" min="0" max="100" value="88" aria-valuemin="0" aria-valuemax="100">
+            <span id="vol-se-val" class="settings-val" aria-hidden="true">88</span>
+          </div>
+          <button type="button" class="neon-btn neon-btn--settings-close" id="btn-settings-close">OK</button>
+        </div>
       </div>
     </section>
 
@@ -131,6 +150,6 @@
     </section>
   </div>
 
-  <script src="game.js?v=26"></script>
+  <script src="game.js?v=28"></script>
 </body>
 </html>

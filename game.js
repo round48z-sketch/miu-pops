@@ -89,6 +89,23 @@
     let ctx = null;
     let master = null;
     let lastMoveAt = 0;
+    let seVolume = 0.88;
+    const SE_STORAGE_KEY = "miu-pops-se";
+
+    function loadSeVolume() {
+      const saved = parseFloat(localStorage.getItem(SE_STORAGE_KEY));
+      if (Number.isFinite(saved)) seVolume = Math.min(1, Math.max(0, saved));
+    }
+
+    function saveSeVolume() {
+      localStorage.setItem(SE_STORAGE_KEY, String(seVolume));
+    }
+
+    function applySeVolume() {
+      if (master) master.gain.value = seVolume;
+    }
+
+    loadSeVolume();
 
     function ensure() {
       if (ctx) return ctx;
@@ -96,7 +113,7 @@
       if (!AC) return null;
       ctx = new AC();
       master = ctx.createGain();
-      master.gain.value = 0.88;
+      applySeVolume();
       master.connect(ctx.destination);
       return ctx;
     }
@@ -251,14 +268,110 @@
         notes.forEach((f, i) => tone(f, 0.28, 0.18, "sine", i * 0.18, f * 0.88));
         tone(165, 0.5, 0.15, "triangle", 0.75, 130);
       },
+      setVolume(v) {
+        seVolume = Math.min(1, Math.max(0, v));
+        applySeVolume();
+        saveSeVolume();
+      },
+      getVolume() {
+        return seVolume;
+      },
+      preview() {
+        resume();
+        tone(520, 0.14, 0.24, "sine", 0, 880);
+        tone(880, 0.1, 0.16, "triangle", 0.045);
+        tone(1240, 0.08, 0.1, "sine", 0.08, 620);
+      },
     };
   })();
+
+  const Bgm = (function () {
+    const BGM_STORAGE_KEY = "miu-pops-bgm";
+    const SRC = "OP.mp3";
+    let audio = null;
+    let volume = 0.7;
+    let unlockRetryBound = false;
+
+    function loadVolume() {
+      const saved = parseFloat(localStorage.getItem(BGM_STORAGE_KEY));
+      if (Number.isFinite(saved)) volume = Math.min(1, Math.max(0, saved));
+    }
+
+    function saveVolume() {
+      localStorage.setItem(BGM_STORAGE_KEY, String(volume));
+    }
+
+    function getAudio() {
+      if (!audio) {
+        audio = new Audio(SRC);
+        audio.loop = true;
+        audio.preload = "auto";
+        audio.volume = volume;
+      }
+      return audio;
+    }
+
+    function bindUnlockRetry() {
+      if (unlockRetryBound) return;
+      unlockRetryBound = true;
+      const retry = () => {
+        unlockRetryBound = false;
+        play();
+      };
+      document.addEventListener("pointerdown", retry, { once: true, passive: true });
+      document.addEventListener("keydown", retry, { once: true });
+    }
+
+    function play() {
+      if (!screens.home.classList.contains("active") || volume <= 0) return;
+      const a = getAudio();
+      a.volume = volume;
+      const p = a.play();
+      if (p && typeof p.then === "function") {
+        p.then(() => {
+          unlockRetryBound = false;
+        }).catch(() => {
+          bindUnlockRetry();
+        });
+      }
+    }
+
+    loadVolume();
+
+    return {
+      play,
+      pause() {
+        if (audio) audio.pause();
+      },
+      setVolume(v) {
+        volume = Math.min(1, Math.max(0, v));
+        getAudio().volume = volume;
+        saveVolume();
+      },
+      getVolume() {
+        return volume;
+      },
+      ensurePlayingOnHome() {
+        play();
+      },
+    };
+  })();
+
+  function unlockAudio() {
+    Sfx.resume();
+    Bgm.play();
+  }
 
   function showScreen(name) {
     Object.values(screens).forEach((s) => s.classList.remove("active"));
     screens[name].classList.add("active");
     document.body.classList.toggle("is-playing", name === "game");
     document.body.classList.toggle("is-home", name === "home");
+    if (name === "home") {
+      Bgm.play();
+    } else {
+      Bgm.pause();
+    }
     if (name !== "game") stopDropLoop();
     if (name === "game") {
       requestAnimationFrame(() => {
@@ -1994,9 +2107,85 @@
   }
 
   levelButtons.forEach((btn) => {
-    btn.addEventListener("click", () => setHomeLevel(btn.dataset.level));
+    btn.addEventListener("click", () => {
+      unlockAudio();
+      setHomeLevel(btn.dataset.level);
+    });
   });
   setHomeLevel(1);
+
+  const settingsPanel = $("settings-panel");
+  const volBgm = $("vol-bgm");
+  const volSe = $("vol-se");
+  const volBgmVal = $("vol-bgm-val");
+  const volSeVal = $("vol-se-val");
+  let sePreviewTimer = null;
+
+  function pct(v) {
+    return Math.round(v * 100);
+  }
+
+  function syncVolumeSliders() {
+    if (volBgm) {
+      volBgm.value = String(pct(Bgm.getVolume()));
+      if (volBgmVal) volBgmVal.textContent = volBgm.value;
+    }
+    if (volSe) {
+      volSe.value = String(pct(Sfx.getVolume()));
+      if (volSeVal) volSeVal.textContent = volSe.value;
+    }
+  }
+
+  function openSettings() {
+    unlockAudio();
+    syncVolumeSliders();
+    if (settingsPanel) {
+      settingsPanel.hidden = false;
+      document.body.classList.add("is-settings-open");
+    }
+    Bgm.ensurePlayingOnHome();
+  }
+
+  function closeSettings() {
+    if (settingsPanel) {
+      settingsPanel.hidden = true;
+      document.body.classList.remove("is-settings-open");
+    }
+  }
+
+  syncVolumeSliders();
+
+  Bgm.play();
+
+  $("btn-settings").addEventListener("click", () => {
+    unlockAudio();
+    openSettings();
+  });
+  $("btn-settings-close").addEventListener("click", closeSettings);
+  $("settings-backdrop").addEventListener("click", closeSettings);
+
+  if (volBgm) {
+    volBgm.addEventListener("input", () => {
+      unlockAudio();
+      const v = Number(volBgm.value) / 100;
+      Bgm.setVolume(v);
+      if (volBgmVal) volBgmVal.textContent = volBgm.value;
+      volBgm.setAttribute("aria-valuenow", volBgm.value);
+      Bgm.ensurePlayingOnHome();
+    });
+  }
+
+  if (volSe) {
+    volSe.addEventListener("input", () => {
+      unlockAudio();
+      const v = Number(volSe.value) / 100;
+      Sfx.setVolume(v);
+      if (volSeVal) volSeVal.textContent = volSe.value;
+      volSe.setAttribute("aria-valuenow", volSe.value);
+      if (sePreviewTimer) clearTimeout(sePreviewTimer);
+      sePreviewTimer = setTimeout(() => Sfx.preview(), 80);
+    });
+  }
 
   function goHome() {
     stopDropLoop();
@@ -2030,7 +2219,7 @@
   bindControl($("btn-hard-drop"), hardDrop);
 
   $("btn-start").addEventListener("click", () => {
-    Sfx.resume();
+    unlockAudio();
     startGame();
   });
   $("btn-retry").addEventListener("click", startGame);

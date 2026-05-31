@@ -327,6 +327,7 @@ body.is-home #screen-home.active::after {
 }
 
 #screen-home .level-select,
+#screen-home .neon-btn--settings,
 #screen-home .neon-btn--hero,
 #screen-home .hint {
   width: min(92vw, 320px);
@@ -336,7 +337,7 @@ body.is-home #screen-home.active::after {
   flex-direction: column;
   align-items: center;
   gap: 0.02rem;
-  font-size: clamp(2rem, 11vw, 2.85rem);
+  font-size: clamp(1.55rem, 8.5vw, 2.15rem);
   line-height: 0.95;
   width: 100%;
 }
@@ -354,10 +355,10 @@ body.is-home #screen-home .logo {
 }
 
 #screen-home .tagline {
-  margin-top: 0.35rem;
+  margin-top: 0.3rem;
   width: 100%;
   text-align: center;
-  font-size: 0.62rem;
+  font-size: 0.56rem;
   letter-spacing: 0.28em;
   padding-left: 0.28em;
   opacity: 0.95;
@@ -379,6 +380,110 @@ body.is-home .neon-btn--hero {
   text-shadow:
     0 0 10px rgba(255, 255, 255, 0.8),
     0 0 18px rgba(255, 79, 216, 0.95);
+}
+
+body.is-home .neon-btn--settings {
+  width: min(92vw, 320px);
+  min-height: 2.35rem;
+  padding: 0.5rem 1.5rem;
+  font-size: 0.62rem;
+  letter-spacing: 0.22em;
+  background: rgba(8, 0, 18, 0.55);
+  border-color: rgba(255, 160, 230, 0.75);
+  box-shadow:
+    0 0 12px rgba(255, 79, 216, 0.35),
+    inset 0 0 10px rgba(255, 79, 216, 0.12);
+}
+
+.settings-panel {
+  position: absolute;
+  inset: 0;
+  z-index: 20;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 16px;
+}
+
+.settings-panel[hidden] {
+  display: none;
+}
+
+.settings-panel__backdrop {
+  position: absolute;
+  inset: 0;
+  border: none;
+  padding: 0;
+  background: rgba(4, 0, 10, 0.72);
+  backdrop-filter: blur(4px);
+  -webkit-backdrop-filter: blur(4px);
+  cursor: pointer;
+}
+
+.settings-panel__card {
+  position: relative;
+  z-index: 1;
+  width: min(88vw, 300px);
+  padding: 18px 18px 16px;
+  border-radius: 18px;
+  border: 1.5px solid rgba(255, 180, 240, 0.75);
+  background: rgba(8, 0, 18, 0.92);
+  box-shadow:
+    0 0 24px rgba(255, 79, 216, 0.45),
+    0 0 48px rgba(255, 45, 138, 0.2),
+    inset 0 0 20px rgba(255, 79, 216, 0.12);
+}
+
+.settings-title {
+  margin: 0 0 14px;
+  font-size: 0.72rem;
+  font-weight: 700;
+  letter-spacing: 0.28em;
+  text-align: center;
+  color: #ffd8f4;
+  text-shadow: 0 0 10px rgba(255, 79, 216, 0.8);
+}
+
+.settings-row {
+  display: grid;
+  grid-template-columns: 2.4rem 1fr 2rem;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 12px;
+}
+
+.settings-label {
+  font-size: 0.62rem;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  color: rgba(255, 200, 235, 0.9);
+}
+
+.settings-val {
+  font-size: 0.62rem;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  color: var(--neon-cyan);
+  text-align: right;
+  text-shadow: 0 0 8px rgba(126, 249, 255, 0.65);
+}
+
+.settings-range {
+  width: 100%;
+  height: 6px;
+  margin: 0;
+  accent-color: var(--neon-pink);
+  cursor: pointer;
+  touch-action: manipulation;
+}
+
+.neon-btn--settings-close {
+  display: block;
+  width: 100%;
+  margin-top: 6px;
+  min-height: 2.4rem;
+  font-size: 0.68rem;
+  letter-spacing: 0.2em;
 }
 
 body.is-home .diff-btn {
@@ -1455,11 +1560,11 @@ body.is-playing .ctrl-btn {
 
   #screen-home .logo,
   body.is-home #screen-home .logo {
-    font-size: clamp(1.75rem, 9.5vw, 2.35rem);
+    font-size: clamp(1.4rem, 7.8vw, 1.9rem);
   }
 
   #screen-home .tagline {
-    font-size: 0.56rem;
+    font-size: 0.52rem;
     letter-spacing: 0.24em;
     padding-left: 0.24em;
   }
@@ -1799,6 +1904,7 @@ body.is-playing .ctrl-btn {
   }
 
   #screen-home .level-select,
+  #screen-home .neon-btn--settings,
   #screen-home .neon-btn--hero,
   #screen-home .hint {
     width: min(90vw, 280px);
@@ -1806,7 +1912,7 @@ body.is-playing .ctrl-btn {
 
   #screen-home .logo,
   body.is-home #screen-home .logo {
-    font-size: clamp(1.65rem, 9vw, 2.1rem);
+    font-size: clamp(1.3rem, 7.2vw, 1.75rem);
   }
 
   .frame-crest,

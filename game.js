@@ -263,8 +263,12 @@
       requestAnimationFrame(() => {
         layoutGameScreen();
         resizeCanvas();
-        draw();
-        if (!gameOver && !dropRafId) scheduleDropLoop();
+        requestAnimationFrame(() => {
+          layoutGameScreen();
+          resizeCanvas();
+          draw();
+          if (!gameOver && !dropRafId) scheduleDropLoop();
+        });
       });
     } else {
       resetBoardLayout();
@@ -273,11 +277,23 @@
 
   function resetBoardLayout() {
     const shell = document.querySelector(".board-shell");
+    const stage = document.querySelector(".board-stage");
     if (shell) {
       shell.style.removeProperty("width");
       shell.style.removeProperty("max-height");
     }
+    if (stage) stage.style.removeProperty("height");
     if (screens.game) screens.game.style.removeProperty("--game-layout-w");
+  }
+
+  function applyBoardStageSize(shell) {
+    const stage = shell.querySelector(".board-stage");
+    if (!stage) return;
+    stage.style.width = "100%";
+    shell.offsetHeight;
+    const playW = stage.clientWidth;
+    if (playW < 1) return;
+    stage.style.height = Math.round(playW * (ROWS / COLS)) + "px";
   }
 
   function layoutGameScreen() {
@@ -290,6 +306,7 @@
 
     const hud = screen.querySelector(".hud");
     const panel = screen.querySelector(".controls-panel");
+    const boardWrap = screen.querySelector(".board-wrap");
     const style = getComputedStyle(screen);
     const padY =
       parseFloat(style.paddingTop) + parseFloat(style.paddingBottom);
@@ -305,8 +322,9 @@
         : BOARD_SHELL_CHROME_TALL;
     const widthRatio = isMobile ? BOARD_WIDTH_RATIO_MOBILE : BOARD_WIDTH_RATIO;
     const widthCap = isMobile ? BOARD_WIDTH_CAP_MOBILE : BOARD_WIDTH_CAP;
+    const boardAspect = COLS / ROWS;
 
-    const avail =
+    const availFromScreen =
       screen.clientHeight -
       (hud ? hud.offsetHeight : 0) -
       (panel ? panel.offsetHeight : 0) -
@@ -314,9 +332,8 @@
       gap * 2;
 
     const layoutW = Math.max(168, screen.clientWidth - padX);
-    const maxStageH = Math.max(120, avail - chrome);
-    const boardAspect = COLS / ROWS;
-    const maxW = Math.max(
+    let maxStageH = Math.max(120, availFromScreen - chrome);
+    let maxW = Math.max(
       168,
       Math.min(
         Math.floor(layoutW * widthRatio),
@@ -327,12 +344,34 @@
 
     screen.style.setProperty("--game-layout-w", maxW + "px");
     shell.style.width = "100%";
-    shell.style.maxHeight = maxStageH + chrome + "px";
+    shell.style.removeProperty("max-height");
+
+    if (boardWrap) {
+      void boardWrap.offsetHeight;
+      const wrapAvail = boardWrap.clientHeight - chrome;
+      if (wrapAvail > 80) {
+        maxW = Math.max(
+          168,
+          Math.min(
+            maxW,
+            Math.floor(layoutW * widthRatio),
+            widthCap,
+            Math.floor(wrapAvail * boardAspect)
+          )
+        );
+        screen.style.setProperty("--game-layout-w", maxW + "px");
+      }
+    }
+
+    applyBoardStageSize(shell);
   }
 
   function onViewportChange() {
     layoutGameScreen();
-    resizeCanvas();
+    requestAnimationFrame(() => {
+      layoutGameScreen();
+      resizeCanvas();
+    });
   }
 
   function emptyBoard() {
@@ -1891,8 +1930,11 @@
     if (!stage) return;
     const rect = stage.getBoundingClientRect();
     const dpr = Math.min(window.devicePixelRatio || 1, 2);
-    const width = Math.max(1, Math.floor(rect.width * dpr));
-    const height = Math.max(1, Math.floor(width * (ROWS / COLS)));
+    const dispW = Math.max(1, rect.width);
+    const dispH = Math.max(1, rect.height);
+    const cell = Math.min(dispW / COLS, dispH / ROWS);
+    const width = Math.max(1, Math.floor(cell * COLS * dpr));
+    const height = Math.max(1, Math.floor(cell * ROWS * dpr));
     if (canvas.width !== width || canvas.height !== height) {
       canvas.width = width;
       canvas.height = height;

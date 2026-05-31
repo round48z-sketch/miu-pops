@@ -664,11 +664,10 @@ body.is-home .diff-btn {
   position: relative;
   width: 100%;
   max-width: 100%;
-  max-height: 100%;
   margin: 0 auto;
   padding: 5px;
-  flex-shrink: 1;
-  min-height: 0;
+  flex-shrink: 0;
+  height: auto;
 }
 
 .board-shell::before {
@@ -786,7 +785,9 @@ body.is-home .diff-btn {
   position: relative;
   width: 100%;
   aspect-ratio: 6 / 12;
-  max-height: 100%;
+  height: auto;
+  flex-shrink: 0;
+  overflow: hidden;
 }
 
 .board-stage canvas {
@@ -1476,7 +1477,7 @@ body.is-playing .ctrl-btn {
 
   .board-shell {
     width: 100%;
-    max-height: 100%;
+    height: auto;
     padding: 2px 4px;
   }
 
@@ -1492,8 +1493,8 @@ body.is-playing .ctrl-btn {
 
   .board-stage {
     width: 100%;
+    height: auto;
     aspect-ratio: 6 / 12;
-    max-height: 100%;
   }
 
   .hud {

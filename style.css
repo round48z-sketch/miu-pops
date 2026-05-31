@@ -1452,6 +1452,11 @@ body.is-playing .controls-panel {
 
 body.is-playing .board-shell {
   filter: drop-shadow(0 0 20px rgba(255, 77, 166, 0.2));
+  background: transparent;
+}
+
+body.is-playing .board-shell::before {
+  opacity: 0;
 }
 
 body.is-playing .board-frame-outer {
@@ -1465,29 +1470,49 @@ body.is-playing .board-frame-outer {
 }
 
 body.is-playing .board-frame {
-  padding: 5px;
+  padding: 4px;
   border-width: 2px;
-  border-color: rgba(255, 210, 240, 0.72);
-  background: rgba(48, 10, 36, 0.14);
-  box-shadow:
-    inset 0 0 18px rgba(255, 77, 166, 0.1),
-    inset 0 1px 0 rgba(255, 255, 255, 0.18);
+  border-color: rgba(255, 210, 240, 0.78);
+  background: transparent;
+  box-shadow: none;
 }
 
 body.is-playing .board-frame-inner {
-  background: rgba(24, 4, 18, 0.06);
-  box-shadow:
-    inset 0 0 28px rgba(255, 45, 138, 0.05),
-    inset 0 0 48px rgba(8, 0, 16, 0.08);
+  background: transparent;
+  box-shadow: none;
 }
 
 body.is-playing .board-frame-inner::before {
-  border-color: rgba(255, 120, 200, 0.2);
-  box-shadow: inset 0 0 16px rgba(255, 77, 166, 0.05);
+  border-color: rgba(255, 130, 210, 0.35);
+  box-shadow: inset 0 0 12px rgba(255, 77, 166, 0.08);
 }
 
-body.is-playing .board-shell::before {
-  opacity: 0.35;
+body.is-playing .board-stage {
+  background: url("1.jpg") center center / cover no-repeat;
+}
+
+body.is-playing #screen-game[data-game-level="1"] .board-stage { background-image: url("1.jpg"); }
+body.is-playing #screen-game[data-game-level="2"] .board-stage { background-image: url("2.jpg"); }
+body.is-playing #screen-game[data-game-level="3"] .board-stage { background-image: url("3.jpg"); }
+body.is-playing #screen-game[data-game-level="4"] .board-stage { background-image: url("4.jpg"); }
+body.is-playing #screen-game[data-game-level="5"] .board-stage { background-image: url("5.jpg"); }
+
+body.is-playing .board-stage::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  pointer-events: none;
+  background: rgba(36, 8, 30, 0.22);
+}
+
+body.is-playing #board-bg,
+body.is-playing #board {
+  background: transparent !important;
+}
+
+body.is-playing .board-stage canvas {
+  z-index: 1;
 }
 
 @keyframes combo-shell-flash {
@@ -1885,9 +1910,9 @@ body.is-playing .ctrl-btn {
 
   #screen-game.active {
     align-items: stretch;
-    gap: 0.08rem;
-    padding-top: max(2px, var(--safe-top));
-    padding-bottom: max(2px, var(--safe-bottom));
+    gap: 0;
+    padding-top: max(1px, var(--safe-top));
+    padding-bottom: max(1px, var(--safe-bottom));
     padding-left: env(safe-area-inset-left, 0px);
     padding-right: env(safe-area-inset-right, 0px);
   }
@@ -1912,21 +1937,21 @@ body.is-playing .ctrl-btn {
   }
 
   .board-shell {
-    width: var(--game-layout-w, min(92vw, 400px));
-    max-width: calc(100% - 2px);
+    width: var(--game-layout-w, min(98vw, 420px));
+    max-width: calc(100% - 1px);
     height: auto;
     margin: 0 auto;
-    padding: 1px 2px;
+    padding: 0 1px;
   }
 
   .board-frame-outer {
     padding: 2px;
-    border-radius: 12px;
+    border-radius: 11px;
   }
 
   .board-frame {
-    padding: 4px;
-    border-radius: 10px;
+    padding: 3px;
+    border-radius: 9px;
   }
 
   .board-stage {
@@ -1936,166 +1961,182 @@ body.is-playing .ctrl-btn {
   }
 
   .hud {
-    padding: 0 3px 1px;
-    gap: 3px;
+    padding: 0 2px 0;
+    gap: 2px;
   }
 
   .diff-badge,
   .speed-badge {
     width: auto;
-    min-width: 38px;
+    min-width: 34px;
     flex: 0 1 auto;
-    padding: 3px 4px;
-    border-radius: 10px;
+    padding: 2px 3px;
+    border-radius: 8px;
   }
 
   .diff-badge-label,
   .speed-badge-label {
-    font-size: 0.36rem;
-    letter-spacing: 0.08em;
+    font-size: 0.34rem;
+    letter-spacing: 0.06em;
   }
 
   .diff-badge-value {
-    font-size: 0.46rem;
+    font-size: 0.42rem;
   }
 
   .speed-badge-value {
-    font-size: 0.5rem;
+    font-size: 0.46rem;
   }
 
   .stat-card {
-    padding: 4px 7px 6px;
-    border-radius: 12px;
+    padding: 3px 6px 4px;
+    border-radius: 10px;
   }
 
   .stat-label {
-    font-size: 0.4rem;
+    font-size: 0.36rem;
   }
 
   .stat-value {
-    font-size: clamp(1.15rem, 6vw, 1.6rem);
+    font-size: clamp(1rem, 5.5vw, 1.35rem);
   }
 
   .preview-card {
     width: auto;
-    min-width: 44px;
+    min-width: 38px;
     flex-shrink: 0;
-    padding: 3px 4px 2px;
-    border-radius: 11px;
+    padding: 2px 3px 1px;
+    border-radius: 9px;
   }
 
   .preview-label {
-    font-size: 0.4rem;
+    font-size: 0.36rem;
+  }
+
+  #next-preview {
+    max-height: 56px;
   }
 
   .controls-panel {
-    padding: 2px 4px max(2px, var(--safe-bottom));
-    gap: 4px;
+    padding: 1px 3px max(1px, var(--safe-bottom));
+    gap: 3px;
   }
 
   .controls {
     grid-template-columns: 1.15fr 0.95fr 1.15fr 1.15fr;
-    gap: 6px;
+    gap: 4px;
   }
 
   .ctrl-btn {
-    min-height: 48px;
-    border-radius: 10px;
+    min-height: 40px;
+    border-radius: 9px;
+    padding: 0.12rem;
   }
 
   #btn-left,
   #btn-right,
   #btn-rotate {
-    min-height: 56px;
-    padding: 0.35rem 0.2rem;
+    min-height: 44px;
+    padding: 0.2rem 0.12rem;
   }
 
   #btn-left .ctrl-icon,
   #btn-right .ctrl-icon,
   #btn-rotate .ctrl-icon {
-    font-size: 1.4rem;
+    font-size: 1.2rem;
   }
 
   #btn-left .ctrl-label,
   #btn-right .ctrl-label,
   #btn-rotate .ctrl-label {
-    font-size: 0.52rem;
+    font-size: 0.46rem;
   }
 
   #btn-down {
-    min-height: 50px;
+    min-height: 42px;
   }
 
   .ctrl-btn--hard {
-    width: min(90%, 300px);
-    min-height: 72px;
-    padding: 0.75rem 1.25rem;
+    width: min(88%, 280px);
+    min-height: 52px;
+    padding: 0.45rem 1rem;
   }
 
   .ctrl-btn--hard .ctrl-icon {
-    font-size: 1.9rem;
+    font-size: 1.55rem;
   }
 
   .ctrl-btn--hard .ctrl-label {
-    font-size: 0.84rem;
+    font-size: 0.72rem;
   }
 
   .ctrl-icon {
-    font-size: 1.05rem;
+    font-size: 0.95rem;
   }
 
   .ctrl-label {
-    font-size: 0.48rem;
+    font-size: 0.44rem;
   }
 
   .action-bar {
-    gap: 5px;
+    gap: 4px;
   }
 
   .neon-btn--compact,
   .home-btn {
-    min-height: 2.1rem;
-    padding-top: 0.4rem;
-    padding-bottom: 0.4rem;
-    font-size: 0.6rem;
+    min-height: 1.85rem;
+    padding-top: 0.32rem;
+    padding-bottom: 0.32rem;
+    font-size: 0.56rem;
   }
 }
 
 @media (max-width: 480px) and (max-height: 700px) {
   .hud {
-    gap: 3px;
+    gap: 2px;
   }
 
   .diff-badge,
   .speed-badge {
-    width: 42px;
-    padding: 4px 2px;
+    width: 38px;
+    padding: 2px 2px;
   }
 
   .preview-card {
-    width: 52px;
+    width: 44px;
+    min-width: 44px;
+  }
+
+  #next-preview {
+    max-height: 50px;
   }
 
   .stat-card {
-    padding: 5px 8px 6px;
+    padding: 3px 6px 4px;
   }
 
   .stat-value {
-    font-size: clamp(1.1rem, 6vw, 1.45rem);
+    font-size: clamp(0.95rem, 5.5vw, 1.25rem);
   }
 
   .ctrl-btn {
-    min-height: 38px;
+    min-height: 36px;
+  }
+
+  #btn-left,
+  #btn-right,
+  #btn-rotate {
+    min-height: 40px;
   }
 
   .ctrl-btn--hard {
-    min-height: 64px;
-    width: min(92%, 280px);
+    min-height: 48px;
+    width: min(86%, 260px);
   }
 
   .neon-btn--compact,
   .home-btn {
-    min-height: 2rem;
+    min-height: 1.75rem;
   }
 }
 

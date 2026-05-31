@@ -79,11 +79,11 @@
 
   const BOARD_SHELL_CHROME = 40;
   const BOARD_SHELL_CHROME_TALL = 52;
-  const BOARD_SHELL_CHROME_MOBILE = 8;
+  const BOARD_SHELL_CHROME_MOBILE = 6;
   const BOARD_WIDTH_CAP = 320;
-  const BOARD_WIDTH_CAP_MOBILE = 480;
-  const BOARD_WIDTH_RATIO = 0.9;
-  const BOARD_WIDTH_RATIO_MOBILE = 0.92;
+  const BOARD_WIDTH_CAP_MOBILE = 520;
+  const BOARD_WIDTH_RATIO = 0.94;
+  const BOARD_WIDTH_RATIO_MOBILE = 0.98;
 
   const Sfx = (function () {
     let ctx = null;
@@ -1882,15 +1882,8 @@
     }
   }
 
-  const BOARD_BG_ALPHA = 0.1;
-
   function drawBoardBg(w, h) {
-    const bg = ctx.createLinearGradient(0, 0, 0, h);
-    bg.addColorStop(0, `rgba(56, 14, 42, ${BOARD_BG_ALPHA})`);
-    bg.addColorStop(0.5, `rgba(40, 10, 32, ${BOARD_BG_ALPHA * 0.92})`);
-    bg.addColorStop(1, `rgba(28, 6, 24, ${BOARD_BG_ALPHA * 0.85})`);
-    ctx.fillStyle = bg;
-    ctx.fillRect(0, 0, w, h);
+    /* 盤面背景は CSS（.board-stage の level 画像）で表示 */
   }
 
   function initBgDecor() {
@@ -1928,23 +1921,7 @@
     const w = bgCanvas.width;
     const h = bgCanvas.height;
     if (!w || !h) return;
-    const t = now * 0.001;
     bgCtx.clearRect(0, 0, w, h);
-
-    for (let y = 0; y < ROWS; y++) {
-      for (let x = 0; x < COLS; x++) {
-        bgCtx.strokeStyle = "rgba(255, 140, 220, 0.11)";
-        bgCtx.strokeRect((x * w) / COLS, (y * h) / ROWS, w / COLS, h / ROWS);
-      }
-    }
-
-    for (const sp of bgSparkles) {
-      const pulse = 0.35 + Math.sin(t * sp.speed + sp.phase) * 0.25;
-      bgCtx.fillStyle = `rgba(200, 240, 255, ${0.08 * pulse})`;
-      bgCtx.beginPath();
-      bgCtx.arc(sp.x * w, sp.y * h, sp.size, 0, Math.PI * 2);
-      bgCtx.fill();
-    }
   }
 
   function stopBgRaf() {
@@ -1980,7 +1957,7 @@
     const cellH = h / ROWS;
     for (let y = 0; y < ROWS; y++) {
       for (let x = 0; x < COLS; x++) {
-        ctx.strokeStyle = "rgba(255, 140, 220, 0.11)";
+        ctx.strokeStyle = "rgba(255, 160, 220, 0.2)";
         ctx.strokeRect(x * cellW, y * cellH, cellW, cellH);
       }
     }

@@ -784,6 +784,10 @@ body.is-home .diff-btn {
   filter: drop-shadow(0 0 6px rgba(255, 79, 216, 0.75));
 }
 
+.diff-badge--pulse {
+  animation: speed-badge-pulse 0.48s ease-out;
+}
+
 .speed-badge {
   flex-shrink: 0;
   width: 58px;
@@ -1415,6 +1419,29 @@ body.is-playing .controls-panel {
     rgba(126, 249, 255, 0.35) 0%,
     rgba(255, 100, 210, 0.45) 40%,
     transparent 75%
+  );
+}
+
+.chain-tier-levelup .chain-banner__text {
+  font-size: clamp(1.6rem, 9vw, 2.4rem);
+  letter-spacing: 0.06em;
+  background: linear-gradient(90deg, #ffd060 0%, #fff 40%, #7ef9ff 100%);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  -webkit-text-fill-color: transparent;
+  filter:
+    drop-shadow(0 0 12px rgba(255, 208, 96, 0.95))
+    drop-shadow(0 0 28px rgba(126, 249, 255, 0.75));
+}
+
+.chain-tier-levelup .chain-banner__burst {
+  width: 88%;
+  background: radial-gradient(
+    circle,
+    rgba(255, 208, 96, 0.45) 0%,
+    rgba(126, 249, 255, 0.35) 42%,
+    transparent 72%
   );
 }
 

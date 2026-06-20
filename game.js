@@ -46,6 +46,10 @@
     minDropMs: 240,
   };
 
+  const SCORE_LEVEL_UNIT = 1200;
+  const RUN_LEVEL_SPEED_STEP = 3;
+  const MAX_RUN_LEVEL = 20;
+
   const $ = (id) => document.getElementById(id);
   const screens = {
     home: $("screen-home"),
@@ -68,9 +72,11 @@
 
   let board, score, pair, nextPair, rot, dropTimer, lockTimer, gameOver, animating;
   let homeLevel = 1;
+  let runLevel = 1;
   let gameStartedAt = 0;
   let speedLevel = 1;
   let speedPulseTimer = null;
+  let runLevelPulseTimer = null;
   let popEffects, particles, explosions, boardFlash, rafId, bgRafId, bgHearts, bgSparkles, wobbles;
   let chainBannerTimer;
   let popIntensity = 1;
@@ -281,6 +287,14 @@
         tone(520, 0.14, 0.24, "sine", 0, 880);
         tone(880, 0.1, 0.16, "triangle", 0.045);
         tone(1240, 0.08, 0.1, "sine", 0.08, 620);
+      },
+      levelUp(lv) {
+        resume();
+        const root = 440 + Math.min(lv, 10) * 36;
+        tone(root, 0.1, 0.16, "sine", 0, root * 1.6);
+        tone(root * 1.25, 0.12, 0.14, "triangle", 0.07, root * 1.8);
+        tone(root * 1.5, 0.14, 0.18, "sine", 0.14, root * 2.2);
+        if (lv >= 3) tone(root * 2, 0.16, 0.12, "sine", 0.22, root * 2.8);
       },
     };
   })();
@@ -761,8 +775,26 @@
     return getDifficulty().startSpeedLevel || 1;
   }
 
-  function getSpeedLevelFromElapsed(elapsedMs) {
-    return getStartSpeedLevel() + Math.floor(Math.max(0, elapsedMs) / SPEED_RAMP.tickMs);
+  function scoreThresholdForRunLevel(level) {
+    if (level <= 1) return 0;
+    return SCORE_LEVEL_UNIT * (level - 1) * level / 2;
+  }
+
+  function runLevelFromScore(s) {
+    let lv = 1;
+    while (lv < MAX_RUN_LEVEL && scoreThresholdForRunLevel(lv + 1) <= s) lv++;
+    return lv;
+  }
+
+  function getScoreMult() {
+    const base = getDifficulty().scoreMult;
+    return base * (1 + (runLevel - 1) * 0.08);
+  }
+
+  function computeSpeedLevel(now) {
+    const elapsed = gameStartedAt && now ? Math.max(0, now - gameStartedAt) : 0;
+    const timeBonus = Math.floor(elapsed / SPEED_RAMP.tickMs);
+    return getStartSpeedLevel() + (runLevel - 1) * RUN_LEVEL_SPEED_STEP + timeBonus;
   }
 
   function getDropMs() {
@@ -787,20 +819,51 @@
 
   function resetSpeedRamp() {
     gameStartedAt = performance.now();
-    speedLevel = getStartSpeedLevel();
+    speedLevel = computeSpeedLevel(gameStartedAt);
     updateSpeedLevelDisplay(false);
   }
 
   function refreshSpeedLevel(now) {
     if (!gameStartedAt || gameOver) return;
-    const nextLevel = getSpeedLevelFromElapsed(now - gameStartedAt);
+    const nextLevel = computeSpeedLevel(now);
     if (nextLevel === speedLevel) return;
     speedLevel = nextLevel;
     updateSpeedLevelDisplay(true);
   }
 
   function getColorCount() {
-    return getDifficulty().colors;
+    const base = getDifficulty().colors;
+    return Math.min(COLORS.length, base + runLevel - 1);
+  }
+
+  function updateRunLevelDisplay(pulse) {
+    if (!diffDisplayEl) return;
+    diffDisplayEl.textContent = String(runLevel);
+    if (runLevel >= 5) diffDisplayEl.setAttribute("data-mode", "miu");
+    else if (runLevel >= 3) diffDisplayEl.setAttribute("data-mode", "insane");
+    else diffDisplayEl.removeAttribute("data-mode");
+    const badge = diffDisplayEl.closest(".diff-badge");
+    if (badge) {
+      badge.classList.remove("diff-badge--pulse");
+      if (pulse) {
+        void badge.offsetWidth;
+        badge.classList.add("diff-badge--pulse");
+        if (runLevelPulseTimer) clearTimeout(runLevelPulseTimer);
+        runLevelPulseTimer = setTimeout(() => badge.classList.remove("diff-badge--pulse"), 520);
+      }
+    }
+    updateGameBackground();
+  }
+
+  function checkRunLevelUp() {
+    const target = runLevelFromScore(score);
+    if (target <= runLevel) return;
+    runLevel = target;
+    updateRunLevelDisplay(true);
+    speedLevel = computeSpeedLevel(performance.now());
+    updateSpeedLevelDisplay(true);
+    showLevelUpBanner(runLevel);
+    Sfx.levelUp(runLevel);
   }
 
   function randColor() {
@@ -808,17 +871,16 @@
   }
 
   function updateLevelDisplay() {
-    if (!diffDisplayEl) return;
-    diffDisplayEl.textContent = String(homeLevel);
-    const id = getDifficultyId();
-    if (id === "insane" || id === "miu") diffDisplayEl.setAttribute("data-mode", id);
-    else diffDisplayEl.removeAttribute("data-mode");
     updateGameBackground();
   }
 
   function updateGameBackground() {
     if (!screens.game) return;
-    screens.game.dataset.gameLevel = String(Math.min(5, Math.max(1, homeLevel)));
+    const inGame = screens.game.classList.contains("active");
+    const level = inGame
+      ? Math.min(5, Math.max(1, runLevel))
+      : Math.min(5, Math.max(1, homeLevel));
+    screens.game.dataset.gameLevel = String(level);
   }
 
   function setHomeLevel(level) {
@@ -1297,6 +1359,36 @@
     return CHAIN_BANNER_MS;
   }
 
+  function showLevelUpBanner(level) {
+    if (!chainBanner || !chainBannerText) return;
+    if (chainBannerTimer) clearTimeout(chainBannerTimer);
+    chainBanner.classList.remove(
+      "chain-banner--show",
+      "chain-tier-2",
+      "chain-tier-3",
+      "chain-tier-4",
+      "chain-tier-fever",
+      "chain-tier-levelup"
+    );
+    chainBannerText.textContent = "LEVEL " + level + "!";
+    chainBanner.hidden = false;
+    void chainBanner.offsetWidth;
+    chainBanner.classList.add("chain-banner--show", "chain-tier-levelup");
+
+    const stage = document.querySelector(".board-stage");
+    if (stage) {
+      stage.classList.remove("chain-shake");
+      void stage.offsetWidth;
+      stage.classList.add("chain-shake");
+      setTimeout(() => stage.classList.remove("chain-shake"), 450);
+    }
+
+    chainBannerTimer = setTimeout(() => {
+      chainBanner.classList.remove("chain-banner--show");
+      chainBanner.hidden = true;
+    }, 1600);
+  }
+
   function showChainBanner(chain) {
     if (!chainBanner || !chainBannerText || chain < 2) return;
     const info = getChainDisplay(chain);
@@ -1308,7 +1400,8 @@
       "chain-tier-2",
       "chain-tier-3",
       "chain-tier-4",
-      "chain-tier-fever"
+      "chain-tier-fever",
+      "chain-tier-levelup"
     );
     chainBannerText.textContent = info.text;
     chainBanner.hidden = false;
@@ -1510,9 +1603,10 @@
       }
 
       chain++;
-      const pts = Math.floor(cells.length * 10 * chain * getDifficulty().scoreMult);
+      const pts = Math.floor(cells.length * 10 * chain * getScoreMult());
       score += pts;
       scoreEl.textContent = score;
+      checkRunLevelUp();
       spawnPopBurst(cells, chain);
 
       const popStart = performance.now();
@@ -2230,7 +2324,8 @@
     stopDropLoop();
     if (lockTimer) clearTimeout(lockTimer);
     stopRaf();
-    if (diffDisplayEl) updateLevelDisplay();
+    runLevel = 1;
+    updateRunLevelDisplay(false);
     board = emptyBoard();
     score = 0;
     scoreEl.textContent = "0";
